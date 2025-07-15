@@ -1,0 +1,4 @@
+meyelesaiakn product controller dan category controller
+membuat view tambah, edit dan hapus product serta kategori
+membuat login dengan role guest
+menyelesaikan singkronisasi hub
