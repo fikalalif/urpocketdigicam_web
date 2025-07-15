@@ -27,6 +27,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('categories', CategoryController::class);
     Route::post('products/sync/{id}', [ProductController::class, 'sync'])->name('products.sync');
     Route::post('category/sync/{id}', [CategoryController::class, 'sync'])->name('category.sync');
+    Route::delete('/category/{id}/delete-from-hub', [CategoryController::class, 'deleteFromHub'])->name('category.deleteFromHub');
+
 
     Route::redirect('settings', 'settings/profile');
 
@@ -34,9 +36,10 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('settings/password', 'settings.password')->name('settings.password');
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
 
-    Route::post('/products/{product}/sync-to-hub', [ProductController::class, 'syncProductToHub']);
-    Route::put('/products/{product}/toggle-visibility', [ProductController::class, 'toggleVisibility']);
-    Route::delete('/products/{product}/delete-fro   m-hub', [ProductController::class, 'deleteProductFromHub']);
+    Route::post('/products/{id}/sync', [ProductController::class, 'sync'])->name('products.sync');
+    Route::post('/products/{id}/sync-to-hub', [ProductController::class, 'syncProductToHub']);
+    Route::put('/products/{id}/toggle-visibility', [ProductController::class, 'toggleVisibility']);
+    Route::delete('/products/{id}/delete-from-hub', [ProductController::class, 'deleteProductFromHub'])->name('products.deleteFromHub');
 
 
 });
