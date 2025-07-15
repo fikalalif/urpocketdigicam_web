@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid("id")->primary();
             $table->uuid("category_id");
             $table->string("name");
-            $table->decimal("price");
+            $table->decimal("price", 12, 2); // Maks 9999999999.99
             $table->string("description")->nullable();
             $table->integer("stock")->default(0);
             $table->string("image")->nullable();

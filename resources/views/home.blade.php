@@ -25,28 +25,37 @@
                         <span class="text-2xl font-bold text-gray-900">URPOCKETDIGICAM</span>
                     </a>
                     <nav class="hidden lg:flex items-center space-x-8">
-                        <a href="#" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Products</a>
-                        <a href="#"
+                        <a href="\products" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Products</a>
+                        <a href="\categories"
                             class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Categories</a>
                     </nav>
                 </div>
 
                 <div class="flex items-center space-x-4">
-                    <div class="hidden md:flex items-center space-x-2 bg-gray-100 rounded-lg px-3 py-2">
+                    <!-- Search Bar -->
+                    <div class="hidden md:flex items-center space-x-2 bg-gray-100 rounded-md px-3 py-2">
                         <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                         <input type="text" placeholder="Search cameras, lenses..."
-                            class="border-0 bg-transparent focus:outline-none w-64 text-sm">
+                            class="border-0 bg-transparent focus:outline-none w-64 text-sm text-gray-700 placeholder-gray-400" />
                     </div>
-                    <a href="/login" class="p-2 text-gray-600 hover:text-blue-600 transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
+
+                    <!-- Login Button -->
+                    <a href="{{ route('login') }}"
+                        class="hidden md:inline-block px-4 py-2 text-sm font-medium text-gray-700 hover:text-white hover:bg-blue-600 rounded-md border border-gray-300 transition-colors">
+                        Login
                     </a>
-                    <a href="/login" class="p-2 text-gray-600 hover:text-blue-600 transition-colors relative">
+
+                    <!-- Register Button -->
+                    <a href="{{ route('register') }}"
+                        class="hidden md:inline-block px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors">
+                        Daftar
+                    </a>
+
+                    <!-- Cart Icon -->
+                    <a href="/cart" class="relative p-2 text-gray-600 hover:text-blue-600 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17M17 13a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -54,6 +63,8 @@
                         <span
                             class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
                     </a>
+
+                    <!-- Mobile Menu Button -->
                     <button class="lg:hidden p-2 text-gray-600 hover:text-blue-600 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -61,6 +72,7 @@
                         </svg>
                     </button>
                 </div>
+
             </div>
         </div>
     </header>
@@ -182,40 +194,24 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                @php
-                    $products = [
-                        ['name' => 'Canon EOS R5', 'price' => '$3,899', 'rating' => '4.9', 'image' => 'canon-r5.jpg'],
-                        ['name' => 'Sony A7 IV', 'price' => '$2,499', 'rating' => '4.8', 'image' => 'sony-a7iv.jpg'],
-                        ['name' => 'Nikon Z9', 'price' => '$5,499', 'rating' => '4.9', 'image' => 'nikon-z9.jpg'],
-                        ['name' => 'Fujifilm X-T5', 'price' => '$1,699', 'rating' => '4.7', 'image' => 'fuji-xt5.jpg']
-                    ];
-                @endphp
-
-                @foreach($products as $product)
+                @forelse($products as $product)
                     <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow group cursor-pointer">
                         <div class="aspect-square bg-gray-100 relative overflow-hidden rounded-t-lg">
-                            <img src="{{ asset('images/products/' . $product['image']) }}" alt="{{ $product['name'] }}"
+                            <img src="{{ $product->image ? asset('storage/' . $product->image) : asset('images/placeholder.jpg') }}"
+                                alt="{{ $product->name }}"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 p-4">
                             <span
                                 class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-sm font-medium">Sale</span>
                         </div>
                         <div class="p-4">
-                            <h3 class="font-semibold mb-2 text-gray-900">{{ $product['name'] }}</h3>
-                            <div class="flex items-center mb-2">
-                                <div class="flex items-center">
-                                    @for($i = 0; $i < 5; $i++)
-                                        <svg class="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                                            <path
-                                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                    @endfor
-                                </div>
-                                <span class="text-sm text-gray-600 ml-2">({{ $product['rating'] }})</span>
-                            </div>
-                            <p class="text-xl font-bold text-blue-600">{{ $product['price'] }}</p>
+                            <h3 class="font-semibold mb-2 text-gray-900">{{ $product->name }}</h3>
+                            <p class="text-xl font-bold text-blue-600">Rp{{ number_format($product->price, 0, ',', '.') }}
+                            </p>
                         </div>
                     </div>
-                @endforeach
+                @empty
+                    <p class="text-gray-500 col-span-full text-center">No products available.</p>
+                @endforelse
             </div>
         </div>
     </section>
