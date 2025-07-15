@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -84,20 +85,95 @@ class CategoryController extends Controller
 
     public function create()
     {
+        return view('categories.create');
     }
     public function store(Request $request)
     {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name',
+        ]);
+
+        // $validated['slug'] = Str::slug($validated['name']);
+        $validated['id'] = Str::uuid();
+
+        Category::create($validated);
+
+        return redirect()->route('categories.index')
+            ->with('success', 'Kategori berhasil ditambahkan');
+
     }
     public function show(string $id)
     {
     }
     public function edit(string $id)
     {
+        $category = Category::findOrFail($id);
+        return view('categories.edit', compact('category'));
+
     }
     public function update(Request $request, string $id)
     {
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $category = Category::findOrFail($id);
+        $category->name = $request->name;
+        // $category->slug = Str::slug($request->name);
+        $category->save();
+
+        return redirect()->route('categories.index')->with('success', 'Kategori berhasil diperbarui.');
+
     }
     public function destroy(string $id)
     {
+        $category = Category::findOrFail($id);
+
+        try {
+            $category->delete();
+
+            return redirect()->route('categories.index')
+                ->with('success', 'Kategori berhasil dihapus.');
+        } catch (\Exception $e) {
+            \Log::error('❌ Gagal menghapus kategori', ['error' => $e->getMessage()]);
+
+            return redirect()->route('categories.index')
+                ->with('error', 'Terjadi kesalahan saat menghapus kategori.');
+        }
     }
+
+    public function deleteFromHub($id)
+    {
+        $category = Category::findOrFail($id);
+
+        if (!$category->hub_category_id) {
+            session()->flash('error', 'Kategori belum pernah disinkronkan ke Hub.');
+            return redirect()->back();
+        }
+
+        $response = Http::withHeaders([
+            'Accept' => 'application/json',
+        ])->delete(env('HUB_API_URL') . '/product-category/' . $category->hub_category_id, [
+                    'client_id' => env('CLIENT_ID'),
+                    'client_secret' => env('CLIENT_SECRET'),
+                ]);
+
+        Log::info('🗑️ Delete category from Hub', [
+            'hub_category_id' => $category->hub_category_id,
+            'response_status' => $response->status(),
+            'response_body' => $response->body(),
+        ]);
+
+        if ($response->successful()) {
+            $category->hub_category_id = null;
+            $category->save();
+
+            session()->flash('success', 'Kategori berhasil dihapus dari Hub.');
+        } else {
+            session()->flash('error', 'Gagal menghapus kategori dari Hub.');
+        }
+
+        return redirect()->back();
+    }
+
 }

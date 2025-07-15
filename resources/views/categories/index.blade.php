@@ -1,6 +1,10 @@
 <x-layouts.app :title="'Kategori Produk'">
     <div class="container mx-auto p-4">
         <h1 class="text-2xl font-bold mb-4">Daftar Kategori</h1>
+        <a href="{{ route('categories.create') }}"
+            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg mb-4 inline-block">
+            + Tambah kategori
+        </a>
 
         {{-- Flash Messages --}}
         @if (session('success'))
@@ -22,6 +26,7 @@
                     <th class="px-4 py-2 border-b text-left">Nama Kategori</th>
                     <th class="px-4 py-2 border-b text-left">Status Sinkron</th>
                     <th class="px-4 py-2 border-b text-left">Sinkron ke Hub</th>
+                    <th class="px-4 py-2 border-b text-left">Aksi</th>
                     <th class="px-4 py-2 border-b text-left">Sync Status</th>
                 </tr>
             </thead>
@@ -50,9 +55,39 @@
                             @else
                                 <span class="text-gray-500 text-sm">✓ Sudah Sinkron</span>
                             @endif
+
+                            <form action="{{ route('category.deleteFromHub', $category->id) }}" method="POST"
+                                onsubmit="return confirm('Yakin ingin menghapus kategori ini dari Hub?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                    class="bg-yellow-500 hover:bg-yellow-700 text-white px-3 py-2 rounded text-sm">
+                                    Hapus dari Hub
+                                </button>
+                            </form>
+
+                        </td>
+                        <td>
+                            <a href="{{ route('categories.edit', $category->id) }}"
+                                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm ml-2">Edit</a>
+                            <form action="{{ route('categories.destroy', $category->id) }}" method="POST"
+                                class="inline-block"
+                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-sm ml-2">
+                                    Hapus
+                                </button>
+                            </form>
+
+                        </td>
+                        <td>
+
                         </td>
                     </tr>
                 @endforeach
+
 
             </tbody>
         </table>
