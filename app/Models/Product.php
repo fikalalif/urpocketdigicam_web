@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 
 class Product extends Model
 {
+
     use HasFactory;
 
     protected $table = 'products';
