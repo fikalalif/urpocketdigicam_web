@@ -1,160 +1,139 @@
 <?php
+
+use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
 
 new #[Layout('components.layouts.auth')] class extends Component {
+    #[Validate('required|string|email')]
     public string $email = '';
+
+    #[Validate('required|string')]
     public string $password = '';
+
     public bool $remember = false;
-    public bool $isLoading = false;
 
     /**
      * Handle an incoming authentication request.
      */
     public function login(): void
     {
-        $this->isLoading = true;
-        
-        $this->validate([
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
-        ]);
+        $this->validate();
 
-        if (! Auth::attempt($this->only(['email', 'password'], $this->remember))) {
-            $this->isLoading = false;
+        $this->ensureIsNotRateLimited();
+
+        if (!Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+            RateLimiter::hit($this->throttleKey());
+
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'email' => __('auth.failed'),
             ]);
         }
 
-        session()->regenerate();
-        $this->isLoading = false;
+        RateLimiter::clear($this->throttleKey());
+        Session::regenerate();
 
-        $this->redirectIntended(route('dashboard', absolute: false), navigate: true);
+        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
     }
-}; 
-?>
 
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 py-12 px-4">
-    <div class="w-full max-w-md">
-        <!-- Main Card -->
-        <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 p-8 space-y-8 relative overflow-hidden">
-            <!-- Background Pattern -->
-            <div class="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-transparent to-blue-600/5"></div>
-            <div class="absolute -top-24 -right-24 w-48 h-48 bg-blue-600/10 rounded-full blur-3xl"></div>
-            <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-600/10 rounded-full"></div>
-            
-            <!-- Content -->
-            <div class="relative z-10">
-                <!-- Header -->
-                <div class="text-center mb-8">
-                    <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl shadow-lg mb-6 transform hover:scale-105 transition-transform duration-300">
-                        <img src="{{ asset('images/cam.jpg') }}" alt="URPOCKETDIGICAM Logo" class="w-12 h-12 rounded-lg object-cover">
-                    </div>
-                    <h1 class="text-3xl font-bold text-gray-900 mb-2 tracking-tight">{{ __('Welcome Back') }}</h1>
-                    <p class="text-gray-600 text-lg">{{ __('Sign in to your account') }}</p>
-                    <div class="w-16 h-1 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full mx-auto mt-4"></div>
-                </div>
+    /**
+     * Ensure the authentication request is not rate limited.
+     */
+    protected function ensureIsNotRateLimited(): void
+    {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+            return;
+        }
 
-                <!-- Session Status -->
-                <x-auth-session-status class="mb-6" :status="session('status')" />
+        event(new Lockout(request()));
 
-                <!-- Login Form -->
-                <form wire:submit="login" class="space-y-6">
-                    <!-- Email Field -->
-                    <div class="group">
-                        <flux:input 
-                            wire:model="email" 
-                            :label="__('Email Address')" 
-                            type="email" 
-                            required 
-                            autofocus 
-                            autocomplete="email"
-                            placeholder="you@example.com"
-                            class="w-full px-4 py-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-300 text-gray-900 placeholder-gray-500 bg-gray-50/50 hover:bg-white" 
-                        />
-                    </div>
+        $seconds = RateLimiter::availableIn($this->throttleKey());
 
-                    <!-- Password Field -->
-                    <div class="group">
-                        <flux:input 
-                            wire:model="password" 
-                            :label="__('Password')" 
-                            type="password" 
-                            required
-                            autocomplete="current-password" 
-                            :placeholder="__('Enter your password')" 
-                            viewable
-                            class="w-full px-4 py-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all duration-300 text-gray-900 placeholder-gray-500 bg-gray-50/50 hover:bg-white" 
-                        />
-                    </div>
+        throw ValidationException::withMessages([
+            'email' => __('auth.throttle', [
+                'seconds' => $seconds,
+                'minutes' => ceil($seconds / 60),
+            ]),
+        ]);
+    }
 
-                    <!-- Remember Me & Forgot Password -->
-                    <div class="flex items-center justify-between">
-                        <label class="flex items-center">
-                            <input wire:model="remember" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                            <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-                        </label>
-                        
-                        <a href="{{ route('password.request') }}" class="text-sm text-blue-600 hover:text-blue-700 hover:underline">
-                            {{ __('Forgot password?') }}
-                        </a>
-                    </div>
+    /**
+     * Get the authentication rate limiting throttle key.
+     */
+    protected function throttleKey(): string
+    {
+        return Str::transliterate(Str::lower($this->email) . '|' . request()->ip());
+    }
+}; ?>
 
-                    <!-- Submit Button -->
-                    <div class="pt-2">
-                        <flux:button 
-                            type="submit" 
-                            variant="primary"
-                            :disabled="$isLoading"
-                            class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 focus:ring-4 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                        >
-                            <div class="flex items-center justify-center space-x-2">
-                                @if($isLoading)
-                                    <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    <span>{{ __('Signing in...') }}</span>
-                                @else
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013 3v1"></path>
-                                    </svg>
-                                    <span>{{ __('Sign In') }}</span>
-                                @endif
-                            </div>
-                        </flux:button>
-                    </div>
-                </form>
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
+    <div class="w-full max-w-xl bg-white rounded-xl shadow-lg p-10 space-y-8">
+        <div class="flex flex-col items-center mb-6">
+            <img src="{{ asset('images/cam.jpg') }}" alt="URPOCKETDIGICAM Logo" class="w-14 h-14 mb-2">
+            <h2 class="text-2xl font-bold text-gray-900 mb-1">{{ __('Log in to your account') }}</h2>
+            <p class="text-gray-500">{{ __('Enter your email and password below to log in') }}</p>
+        </div>
 
-                <!-- Divider -->
-                <div class="relative my-8">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-gray-200"></div>
-                    </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="px-4 bg-white text-gray-500 font-medium">{{ __("Don't have an account?") }}</span>
-                    </div>
-                </div>
+        <!-- Session Status -->
+        <x-auth-session-status class="text-center mb-4" :status="session('status')" />
 
-                <!-- Register Link -->
-                <div class="text-center">
-                    <a href="{{ route('register') }}" 
-                       class="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-700 font-semibold text-lg transition-colors duration-200 hover:underline decoration-2 underline-offset-4">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                        </svg>
-                        <span>{{ __('Create new account') }}</span>
-                    </a>
-                </div>
+        <form wire:submit="login" class="space-y-6">
+            <!-- Email Address -->
+            <div>
+                <label for="email"
+                    class="block text-sm font-medium text-gray-700 mb-1">{{ __('Email address') }}</label>
+                <input wire:model="email" id="email" name="email" type="email" required autofocus autocomplete="email"
+                    placeholder="email@example.com"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:outline-none text-gray-900" />
+                @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
-        </div>
 
-        <!-- Footer -->
-        <div class="text-center mt-8 text-sm text-gray-600">
-            <p>{{ __('© 2024 URPOCKETDIGICAM. Professional Camera Equipment.') }}</p>
-        </div>
+            <!-- Password -->
+            <div class="relative">
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">{{ __('Password') }}</label>
+                <input wire:model="password" id="password" name="password" type="password" required
+                    autocomplete="current-password" placeholder="{{ __('Password') }}"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:outline-none text-gray-900" />
+                @error('password') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+
+                @if (Route::has('password.request'))
+                    <a class="absolute right-0 top-0 text-sm text-blue-600 hover:underline mt-1 mr-1"
+                        href="{{ route('password.request') }}">
+                        {{ __('Forgot your password?') }}
+                    </a>
+                @endif
+            </div>
+
+            <!-- Remember Me -->
+            <div class="flex items-center">
+                <input wire:model="remember" id="remember" name="remember" type="checkbox"
+                    class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-600" />
+                <label for="remember" class="ml-2 block text-sm text-gray-700">
+                    {{ __('Remember me') }}
+                </label>
+            </div>
+
+            <div>
+                <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors shadow">
+                    {{ __('Log in') }}
+                </button>
+            </div>
+        </form>
+
+        @if (Route::has('register'))
+            <div class="text-center text-sm text-gray-600 mt-4">
+                {{ __("Don't have an account?") }}
+                <a href="{{ route('register') }}"
+                    class="text-blue-600 hover:underline font-semibold">{{ __('Sign up') }}</a>
+            </div>
+        @endif
     </div>
 </div>
