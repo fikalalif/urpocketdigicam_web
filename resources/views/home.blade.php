@@ -17,109 +17,108 @@
     <!-- Header -->
     <header class="border-b bg-white sticky top-0 z-50 shadow-sm">
         <div class="container mx-auto px-4">
-            <!-- Main header -->
+            <!-- Header utama -->
             <div class="flex items-center justify-between py-4">
+                <!-- Kiri: Logo & Navigasi -->
                 <div class="flex items-center space-x-8">
                     <a href="/" class="flex items-center space-x-2">
                         <img src="{{ asset('images/cam.jpg') }}" alt="URPOCKETDIGICAM Logo" class="w-12 h-10">
-                        <span class="text-2xl font-bold text-gray-900">URPOCKETDIGICAM</span>
+                        <span class="text-2xl font-extrabold tracking-widest text-gray-900">
+                            <span class="text-[#4f46e5]">URPOCKET</span><span class="text-[#ec4899]">DIGICAM</span>
+                        </span>
+
                     </a>
                     <nav class="hidden lg:flex items-center space-x-8">
-                        <a href="\products" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Products</a>
-                        <a href="\categories"
-                            class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Categories</a>
+                        <a href="#products" class="text-gray-700 hover:text-[#4f46e5] font-medium transition-colors">
+                            Products
+                        </a>
+                        <a href="#categories" class="text-gray-700 hover:text-[#4f46e5] font-medium transition-colors">
+                            Categories
+                        </a>
                     </nav>
                 </div>
 
+                <!-- Kanan: Search + Auth -->
                 <div class="flex items-center space-x-4">
-                    <!-- Search Bar -->
-                    <div class="hidden md:flex items-center space-x-2 bg-gray-100 rounded-md px-3 py-2">
-                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <!-- Search -->
+                    <div class="hidden md:flex items-center bg-gray-100 rounded-md px-3 py-2 w-72">
+                        <svg class="w-4 h-4 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        <input type="text" placeholder="Search cameras, lenses..."
-                            class="border-0 bg-transparent focus:outline-none w-64 text-sm text-gray-700 placeholder-gray-400" />
+                        <input type="text"
+                            placeholder="Search cameras, lenses..."
+                            class="w-full bg-transparent border-0 focus:outline-none text-sm text-gray-700 placeholder-gray-400">
                     </div>
 
-                    <!-- Login Button -->
+                    <!-- Login -->
                     <a href="{{ route('login') }}"
-                        class="hidden md:inline-block px-4 py-2 text-sm font-medium text-gray-700 hover:text-white hover:bg-blue-600 rounded-md border border-gray-300 transition-colors">
+                        class="hidden md:inline-block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-[#4f46e5] hover:text-white border border-gray-300 rounded-md transition-colors">
                         Login
                     </a>
 
-                    <!-- Register Button -->
+                    <!-- Register -->
                     <a href="{{ route('register') }}"
-                        class="hidden md:inline-block px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors">
+                        class="hidden md:inline-block px-4 py-2 text-sm font-medium text-white bg-[#4f46e5] hover:bg-[#3730a3] rounded-md transition-colors">
                         Daftar
                     </a>
 
-                    <!-- Cart Icon -->
-                    <a href="/cart" class="relative p-2 text-gray-600 hover:text-blue-600 transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17M17 13a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        <span
-                            class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
-                    </a>
-
-                    <!-- Mobile Menu Button -->
-                    <button class="lg:hidden p-2 text-gray-600 hover:text-blue-600 transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <!-- Mobile Menu (ikon burger) -->
+                    <button class="lg:hidden p-2 text-gray-600 hover:text-[#4f46e5] transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
                 </div>
-
             </div>
         </div>
-    </header>
 
+    </header>
     <!-- Hero Section -->
-    <section class="relative h-screen bg-gradient-to-r from-gray-900 to-gray-700 overflow-hidden">
-        <div class="absolute inset-0">
-            <img src="{{ asset('images/.jpg') }}" alt="Professional camera setup"
-                class="w-full h-full object-cover opacity-30">
-        </div>
-        <div class="relative container mx-auto px-4 h-full flex items-center">
+    <section class="relative h-screen bg-gradient-to-r from-gray-900 to-gray-800 flex items-center">
+        <div class="container mx-auto px-4">
             <div class="max-w-2xl text-white">
-                <span class="inline-block bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium mb-4">New
-                    Arrivals</span>
-                <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-                    Capture Every
-                    <span class="block text-blue-400">Moment</span>
+                <span class="inline-block bg-[#4f46e5] text-white px-3 py-1 rounded-full text-sm font-semibold mb-4 uppercase tracking-wide">
+                    New in Stock
+                </span>
+                <h1 class="text-5xl md:text-6xl font-extrabold mb-6 leading-tight text-white">
+                    Discover Elite <span class="block text-[#db2777]">Digital Gear</span>
                 </h1>
-                <p class="text-xl mb-8 text-gray-300 leading-relaxed">
-                    Professional cameras and lenses for photographers who demand excellence. Discover our latest
-                    collection of cutting-edge equipment.
+                <p class="text-lg md:text-xl mb-8 text-gray-300 leading-relaxed">
+                    Explore our curated selection of cameras and lenses for professionals and enthusiasts. Pure quality, no distractions.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <a href="#"
-                        class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold text-center transition-colors">
-                        Shop Cameras
+                        class="inline-block bg-[#db2777] hover:bg-[#be185d] text-white px-6 py-3 rounded-md font-medium transition-colors">
+                        Browse Catalog
                     </a>
                     <a href="#"
-                        class="inline-block border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 rounded-lg font-semibold text-center transition-colors">
-                        View Deals
+                        class="inline-block border border-white text-white hover:bg-white hover:text-black px-6 py-3 rounded-md font-medium transition-colors">
+                        View Offers
                     </a>
                 </div>
             </div>
         </div>
 
         <!-- Promotional banner -->
-        <div class="absolute bottom-0 left-0 w-full bg-blue-600 py-3 overflow-hidden">
-            <div class="flex animate-marquee whitespace-nowrap">
-                <span class="mx-8 text-white font-medium">🎯 Up to 40% off selected cameras</span>
-                <span class="mx-8 text-white font-medium">📦 Free shipping on orders over $500</span>
-                <span class="mx-8 text-white font-medium">🔄 30-day return policy</span>
-                <span class="mx-8 text-white font-medium">🎯 Up to 40% off selected cameras</span>
-                <span class="mx-8 text-white font-medium">📦 Free shipping on orders over $500</span>
-                <span class="mx-8 text-white font-medium">🔄 30-day return policy</span>
+        <!-- Promotional banner -->
+        <div class="absolute bottom-0 left-0 w-full bg-[#4f46e5] py-2 overflow-hidden">
+            <div class="animate-marquee whitespace-nowrap text-sm md:text-base font-medium text-white tracking-wide">
+                <span class="inline-block px-8">Explore 100+ Camera Models</span>
+                <span class="inline-block px-8">Fast & Secure Shipping</span>
+                <span class="inline-block px-8">Trusted by Professional Photographers</span>
+                <span class="inline-block px-8">Explore 100+ Camera Models</span>
+                <span class="inline-block px-8">Fast & Secure Shipping</span>
+                <span class="inline-block px-8">Trusted by Professional Photographers</span>
+                <span class="inline-block px-8">Explore 100+ Camera Models</span>
+                <span class="inline-block px-8">Fast & Secure Shipping</span>
+                <span class="inline-block px-8">Trusted by Professional Photographers</span>
             </div>
         </div>
+
     </section>
+
 
     <!-- Featured Categories -->
     <section class="py-16 bg-gray-50">
@@ -183,7 +182,7 @@
     </section>
 
     <!-- Featured Products -->
-    <section class="py-16">
+    <section class="py-16" id="products">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center mb-12">
                 <h2 class="text-3xl font-bold text-gray-900">Featured Products</h2>
@@ -195,39 +194,39 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 @forelse($products as $product)
-                    <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow group cursor-pointer">
-                        <div class="aspect-square bg-gray-100 relative overflow-hidden rounded-t-lg">
-                            <img src="{{ $product->image ? asset('storage/' . $product->image) : asset('images/placeholder.jpg') }}"
-                                alt="{{ $product->name }}"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 p-4">
-                            <span
-                                class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-sm font-medium">Sale</span>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-semibold mb-2 text-gray-900">{{ $product->name }}</h3>
-                            <p class="text-xl font-bold text-blue-600">Rp{{ number_format($product->price, 0, ',', '.') }}
-                            </p>
-                        </div>
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow group cursor-pointer">
+                    <div class="aspect-square bg-gray-100 relative overflow-hidden rounded-t-lg">
+                        <img src="{{ $product->image ? asset('storage/' . $product->image) : asset('images/placeholder.jpg') }}"
+                            alt="{{ $product->name }}"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 p-4">
+                        <span
+                            class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-sm font-medium">Sale</span>
                     </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold mb-2 text-gray-900">{{ $product->name }}</h3>
+                        <p class="text-xl font-bold text-blue-600">Rp{{ number_format($product->price, 0, ',', '.') }}
+                        </p>
+                    </div>
+                </div>
                 @empty
-                    <p class="text-gray-500 col-span-full text-center">No products available.</p>
+                <p class="text-gray-500 col-span-full text-center">No products available.</p>
                 @endforelse
             </div>
         </div>
     </section>
 
     <!-- Brand Showcase -->
-    <section class="py-16 bg-gray-50">
+    <section class="py-16 bg-gray-50" id="categories">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold text-center mb-12 text-gray-900">Trusted Brands</h2>
             <div class="grid grid-cols-2 md:grid-cols-6 gap-8 items-center">
                 @php
-                    $brands = ['Canon', 'Sony', 'Nikon', 'Fujifilm', 'Leica', 'Olympus'];
+                $brands = ['Canon', 'Sony', 'Nikon', 'Fujifilm', 'Leica', 'Olympus'];
                 @endphp
                 @foreach($brands as $brand)
-                    <div class="flex items-center justify-center p-4 bg-white rounded-lg hover:shadow-md transition-shadow">
-                        <span class="text-xl font-bold text-gray-600">{{ $brand }}</span>
-                    </div>
+                <div class="flex items-center justify-center p-4 bg-white rounded-lg hover:shadow-md transition-shadow">
+                    <span class="text-xl font-bold text-gray-600">{{ $brand }}</span>
+                </div>
                 @endforeach
             </div>
         </div>
@@ -283,49 +282,51 @@
     </section>
 
     <!-- Newsletter -->
-    <section class="py-16 bg-blue-600 text-white">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-3xl font-bold mb-4">Stay Updated</h2>
-            <p class="text-xl mb-8 opacity-90">Get the latest camera news, deals, and photography tips</p>
-            <form action="#" method="POST" class="max-w-md mx-auto flex gap-4">
-                @csrf
-                <input type="email" name="email" placeholder="Enter your email" required
-                    class="flex-1 px-4 py-3 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-white">
-                <button type="submit"
-                    class="bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 rounded-lg font-semibold transition-colors">
-                    Subscribe
-                </button>
-            </form>
-        </div>
-    </section>
+    <!-- Newsletter
+<section class="py-16 bg-[#1f2235] text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-4 tracking-wide">Stay Updated</h2>
+        <p class="text-base md:text-lg mb-8 opacity-80 max-w-xl mx-auto">
+            Subscribe to receive the latest camera news, exclusive deals, and photography tips — straight to your inbox.
+        </p>
+        <form action="#" method="POST" class="max-w-xl mx-auto flex flex-col sm:flex-row gap-4">
+            @csrf
+            <input type="email" name="email" placeholder="Enter your email" required
+                class="flex-1 px-4 py-3 rounded-md text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#4f46e5]">
+            <button type="submit"
+                class="bg-[#4f46e5] hover:bg-[#3f3ac7] text-white px-6 py-3 rounded-md font-semibold transition-colors">
+                Subscribe
+            </button>
+        </form>
+    </div>
+</section> -->
+
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
+    <footer class="bg-[#111827] text-white py-12">
         <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
                 <div>
-                    <div class="flex items-center space-x-2 mb-4">
-                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <span class="text-xl font-bold">URPOCKETDIGICAM</span>
+                    <div class="mb-4">
+                        <a href="/" class="flex items-center space-x-3">
+                            <span class="text-2xl font-extrabold tracking-widest">
+                                <span class="text-[#4f46e5]">URPOCKET</span><span class="text-[#ec4899]">DIGICAM</span>
+                            </span>
+                        </a>
                     </div>
-                    <p class="text-gray-400 mb-4">
+                    <p class="text-gray-400 mb-6 text-sm leading-relaxed">
                         Your trusted partner for professional photography equipment since 2010.
                     </p>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">Instagram</a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">Facebook</a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">YouTube</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Instagram</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Facebook</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">YouTube</a>
                     </div>
                 </div>
 
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Products</h3>
-                    <ul class="space-y-2 text-gray-400">
+                    <ul class="space-y-2 text-gray-400 text-sm">
                         <li><a href="#" class="hover:text-white transition-colors">DSLR Cameras</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Mirrorless Cameras</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Lenses</a></li>
@@ -335,7 +336,7 @@
 
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Support</h3>
-                    <ul class="space-y-2 text-gray-400">
+                    <ul class="space-y-2 text-gray-400 text-sm">
                         <li><a href="#" class="hover:text-white transition-colors">Contact Us</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Shipping Info</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Returns</a></li>
@@ -345,7 +346,7 @@
 
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Company</h3>
-                    <ul class="space-y-2 text-gray-400">
+                    <ul class="space-y-2 text-gray-400 text-sm">
                         <li><a href="#" class="hover:text-white transition-colors">About Us</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Careers</a></li>
                         <li><a href="#" class="hover:text-white transition-colors">Press</a></li>
@@ -354,28 +355,14 @@
                 </div>
             </div>
 
-            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; {{ date('Y') }} URPOCKETDIGICAM. All rights reserved. | Powered by <a
-                        href="https://laravel.com" class="hover:text-white transition-colors">Laravel</a></p>
+            <div class="border-t border-gray-800 mt-10 pt-6 text-center text-gray-500 text-sm">
+                <p>&copy; {{ date('Y') }} URPOCKETDIGICAM. All rights reserved. | Powered by
+                    <a href="https://laravel.com" class="hover:text-white">Laravel</a>
+                </p>
             </div>
         </div>
     </footer>
 
-    <style>
-        @keyframes marquee {
-            0% {
-                transform: translateX(0%);
-            }
-
-            100% {
-                transform: translateX(-100%);
-            }
-        }
-
-        .animate-marquee {
-            animation: marquee 25s linear infinite;
-        }
-    </style>
 
 </body>
 
