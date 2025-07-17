@@ -478,9 +478,9 @@
         </div>
         <div class="absolute bottom-20 right-4 w-16 h-16 bg-cyan-200 rounded-lg pixel-border animate-float opacity-60 md:right-10"
             style="animation-delay: 1s;"></div>
-        <div
+        {{-- <div
             class="absolute top-1/2 left-1/4 w-12 h-12 bg-pink-300 rounded-full pixel-border animate-pulse-slow opacity-40">
-        </div>
+        </div> --}}
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div class="animate-fade-in-up">
