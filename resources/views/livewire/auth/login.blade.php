@@ -1,74 +1,139 @@
-@extends('layouts.app')
+<?php
 
-@section('content')
-<div class="gradient-secondary min-h-screen flex items-center justify-center">
-    <div class="w-full max-w-xl">
-        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 pixel-border pixel-shadow-lg">
-            <div class="flex justify-center mb-4">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-20 w-20">
-            </div>
-            <div class="flex justify-center mb-4">
-                <h2 class="text-2xl font-bold text-gray-800">Login</h2>
-            </div>
-            <form method="POST" action="{{ route('login') }}">
-                @csrf
+use Illuminate\Auth\Events\Lockout;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Validate;
+use Livewire\Volt\Component;
 
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
-                        Email Address
-                    </label>
-                    <input
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pixel-border-light focus:ring-2 focus:ring-pink-600 focus:outline-none text-gray-900 @error('email') border-red-500 @enderror"
-                        id="email" type="email" placeholder="Email" name="email" value="{{ old('email') }}" required
-                        autocomplete="email" autofocus>
-                    @error('email')
-                    <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                    @enderror
-                </div>
+new #[Layout('components.layouts.auth')] class extends Component {
+    #[Validate('required|string|email')]
+    public string $email = '';
 
-                <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                        Password
-                    </label>
-                    <input
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline pixel-border-light focus:ring-2 focus:ring-pink-600 focus:outline-none text-gray-900 @error('password') border-red-500 @enderror"
-                        id="password" type="password" placeholder="Password" name="password" required
-                        autocomplete="current-password">
-                    @error('password')
-                    <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                    @enderror
-                </div>
+    #[Validate('required|string')]
+    public string $password = '';
 
-                <div class="flex items-center justify-between mb-4">
-                    <label class="flex items-center">
-                        <input type="checkbox" class="mr-2 leading-tight text-pink-600" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                        <span class="text-sm text-gray-700">
-                            Remember Me
-                        </span>
-                    </label>
-                    @if (Route::has('password.request'))
-                    <a class="inline-block align-baseline font-bold text-sm text-cyan-600 hover:text-cyan-800"
-                        href="{{ route('password.request') }}">
-                        Forgot Your Password?
-                    </a>
-                    @endif
-                </div>
+    public bool $remember = false;
 
-                <div class="flex items-center justify-between">
-                    <button
-                        class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline pixel-shadow"
-                        type="submit">
-                        Sign In
-                    </button>
-                    @if (Route::has('register'))
-                    <a class="inline-block align-baseline font-bold text-sm text-cyan-600 hover:text-cyan-800"
-                        href="{{ route('register') }}">
-                        Sign up
-                    </a>
-                    @endif
-                </div>
-            </form>
+    /**
+     * Handle an incoming authentication request.
+     */
+    public function login(): void
+    {
+        $this->validate();
+
+        $this->ensureIsNotRateLimited();
+
+        if (!Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => __('auth.failed'),
+            ]);
+        }
+
+        RateLimiter::clear($this->throttleKey());
+        Session::regenerate();
+
+        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+    }
+
+    /**
+     * Ensure the authentication request is not rate limited.
+     */
+    protected function ensureIsNotRateLimited(): void
+    {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+            return;
+        }
+
+        event(new Lockout(request()));
+
+        $seconds = RateLimiter::availableIn($this->throttleKey());
+
+        throw ValidationException::withMessages([
+            'email' => __('auth.throttle', [
+                'seconds' => $seconds,
+                'minutes' => ceil($seconds / 60),
+            ]),
+        ]);
+    }
+
+    /**
+     * Get the authentication rate limiting throttle key.
+     */
+    protected function throttleKey(): string
+    {
+        return Str::transliterate(Str::lower($this->email) . '|' . request()->ip());
+    }
+}; ?>
+
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
+    <div class="w-full max-w-xl bg-white rounded-xl shadow-lg p-10 space-y-8">
+        <div class="flex flex-col items-center mb-6">
+            <img src="{{ asset('images/cam.jpg') }}" alt="URPOCKETDIGICAM Logo" class="w-14 h-13 mb-2">
+            <h2 class="text-2xl font-bold text-gray-900 mb-1">{{ __('Log in to your account') }}</h2>
+            <p class="text-gray-500">{{ __('Enter your email and password below to log in') }}</p>
         </div>
+
+        <!-- Session Status -->
+        <x-auth-session-status class="text-center mb-4" :status="session('status')" />
+
+        <form wire:submit="login" class="space-y-6">
+            <!-- Email Address -->
+            <div>
+                <label for="email"
+                    class="block text-sm font-medium text-gray-700 mb-1">{{ __('Email address') }}</label>
+                <input wire:model="email" id="email" name="email" type="email" required autofocus autocomplete="email"
+                    placeholder="email@example.com"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:outline-none text-gray-900" />
+                @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+            </div>
+
+            <!-- Password -->
+            <div class="relative">
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">{{ __('Password') }}</label>
+                <input wire:model="password" id="password" name="password" type="password" required
+                    autocomplete="current-password" placeholder="{{ __('Password') }}"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:outline-none text-gray-900" />
+                @error('password') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+
+                @if (Route::has('password.request'))
+                    <a class="absolute right-0 top-0 text-sm text-blue-600 hover:underline mt-1 mr-1"
+                        href="{{ route('password.request') }}">
+                        {{ __('Forgot your password?') }}
+                    </a>
+                @endif
+            </div>
+
+            <!-- Remember Me -->
+            <div class="flex items-center">
+                <input wire:model="remember" id="remember" name="remember" type="checkbox"
+                    class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-600" />
+                <label for="remember" class="ml-2 block text-sm text-gray-700">
+                    {{ __('Remember me') }}
+                </label>
+            </div>
+
+            <div>
+                <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors shadow">
+                    {{ __('Log in') }}
+                </button>
+            </div>
+        </form>
+
+        @if (Route::has('register'))
+            <div class="text-center text-sm text-gray-600 mt-4">
+                {{ __("Don't have an account?") }}
+                <a href="{{ route('register') }}"
+                    class="text-blue-600 hover:underline font-semibold">{{ __('Sign up') }}</a>
+            </div>
+        @endif
     </div>
 </div>
-@endsection
