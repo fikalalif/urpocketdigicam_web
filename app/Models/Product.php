@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 
 class Product extends Model
 {
-
     use HasFactory;
 
     protected $table = 'products';
@@ -18,14 +17,29 @@ class Product extends Model
     protected $fillable = [
         'id',
         'name',
-        'price',
         'description',
+        'price',
         'stock',
+        'sku',
         'image',
-        'category_id'
+        'weight',
+        'is_active',
+        'is_visible',
+        'hub_product_id',
+        'category_id',
     ];
 
-    // 🟢 Generate UUID otomatis saat create
+    protected $casts = [
+        'is_active' => 'boolean',
+        'is_visible' => 'boolean',
+    ];
+
+    public function getImageUrlAttribute()
+    {
+        return $this->image ? asset('storage/' . $this->image) : asset('default.png');
+    }
+
+
     protected static function boot()
     {
         parent::boot();

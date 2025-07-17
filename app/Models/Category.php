@@ -3,30 +3,42 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Category extends Model
 {
-    protected $table = 'categories';
     public $incrementing = false;
     protected $keyType = 'string';
-
 
     protected $fillable = [
         'id',
         'name',
+        'description',
+        'hub_category_id',
+        'is_active',  // ✅ Tambah ini supaya mass assignment jalan
     ];
+
+    protected $casts = [
+        'is_active' => 'boolean',  // ✅ Supaya boolean otomatis di-cast
+    ];
+
     protected static function boot()
     {
         parent::boot();
+
         static::creating(function ($model) {
-            if (! $model->getKey()) {
-                $model->{$model->getKeyName()} = (string) Str::uuid();
+            if (empty($model->id)) {
+                $model->id = (string) Str::uuid();
+            }
+
+            if (is_null($model->is_active)) {
+                $model->is_active = true; // ✅ Default aktif saat buat
             }
         });
     }
-    
+
     public function products()
     {
-        return $this->hasMany(Product::class, 'category_id');
+        return $this->hasMany(Product::class);
     }
 }

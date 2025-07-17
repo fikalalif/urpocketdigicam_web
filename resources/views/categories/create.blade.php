@@ -1,5 +1,4 @@
-<x-layouts.app :title="'Kategori Produk'">
-
+<x-layouts.app :title="'Tambah Kategori'">
     <div class="container mx-auto p-6">
         <form action="{{ route('categories.store') }}" method="POST" class="bg-white p-6 rounded shadow-md">
             @csrf
@@ -9,7 +8,7 @@
                 <input type="text" name="name" id="name" value="{{ old('name') }}"
                     class="w-full border rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring focus:border-blue-300">
                 @error('name')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
+                    <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>
 
