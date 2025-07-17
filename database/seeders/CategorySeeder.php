@@ -11,24 +11,23 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $brands = [
-            'Canon',
-            'Nikon',
-            'Sony',
-            'Fujifilm',
-            'Panasonic',
-            'Olympus',
-            'Leica',
-            'Pentax',
-            'GoPro',
-            'DJI',
+            'Canon' => 'Kamera Canon',
+            'Fujifilm' => 'Kamera Fujifilm',
+            'Nikon' => 'Kamera Nikon',
+            'Olympus' => 'Kamera Olympus',
+            'Samsung' => 'Kamera Samsung',
+            'Sony' => 'Kamera Sony',
         ];
 
-        foreach ($brands as $brand) {
-            Category::create([
+        foreach ($brands as $name => $desc) {
+            Category::updateOrCreate([
+                'name' => $name,
+            ], [
                 'id' => (string) Str::uuid(),
-                'name' => $brand,
-                'description' => 'Produk dari merk ' . $brand,
+                'description' => $desc,
                 'hub_category_id' => null,
+                'is_active' => true,
+                'is_visible' => true,
             ]);
         }
     }

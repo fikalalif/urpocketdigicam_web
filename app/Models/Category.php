@@ -15,11 +15,13 @@ class Category extends Model
         'name',
         'description',
         'hub_category_id',
-        'is_active',  // ✅ Tambah ini supaya mass assignment jalan
+        'is_active',
+        'is_visible',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',  // ✅ Supaya boolean otomatis di-cast
+        'is_active' => 'boolean',
+        'is_visible' => 'boolean',
     ];
 
     protected static function boot()
@@ -32,7 +34,11 @@ class Category extends Model
             }
 
             if (is_null($model->is_active)) {
-                $model->is_active = true; // ✅ Default aktif saat buat
+                $model->is_active = true;
+            }
+
+            if (is_null($model->is_visible)) {
+                $model->is_visible = true;
             }
         });
     }

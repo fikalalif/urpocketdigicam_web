@@ -2,8 +2,7 @@
     <div class="container mx-auto p-4">
         <h1 class="text-2xl font-bold mb-4">Daftar Produk</h1>
 
-        <a href="{{ route('products.create') }}"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded mb-4 inline-block">
+        <a href="{{ route('products.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded mb-4 inline-block">
             + Tambah Produk
         </a>
 
@@ -20,11 +19,12 @@
         @endif
 
         <table class="min-w-full bg-white shadow rounded">
-            <thead>
+            <thead class="bg-gray-100">
                 <tr>
                     <th class="px-4 py-2 border-b text-left">Nama Produk</th>
                     <th class="px-4 py-2 border-b text-left">Harga</th>
-                    <th class="px-4 py-2 border-b text-left">Status</th>
+                    <th class="px-4 py-2 border-b text-left">Stok</th>
+                    <th class="px-4 py-2 border-b text-left">Status (Hub)</th>
                     <th class="px-4 py-2 border-b text-left">Aksi</th>
                 </tr>
             </thead>
@@ -33,59 +33,41 @@
                     <tr class="hover:bg-gray-50">
                         <td class="px-4 py-2 border-b">{{ $product->name }}</td>
                         <td class="px-4 py-2 border-b">Rp{{ number_format($product->price, 0, ',', '.') }}</td>
+                        <td class="px-4 py-2 border-b">{{ $product->stock }}</td>
                         <td class="px-4 py-2 border-b">
-                            @if ($product->is_visible)
-                                <span class="text-green-600">✅ Tampil di Hub</span>
+                            @if ($product->is_active)
+                                <span class="text-green-600 font-semibold">Aktif</span>
                             @else
-                                <span class="text-gray-500">❌ Tidak Tampil</span>
+                                <span class="text-red-600 font-semibold">Non-Aktif</span>
                             @endif
                         </td>
                         <td class="px-4 py-2 border-b space-x-1">
-                            @if ($product->is_visible)
-                                <form action="{{ route('products.setInvisible', $product) }}" method="POST" class="inline-block">
-                                    @csrf
-                                    @method('PUT')
-                                    <button type="submit"
-                                        class="bg-yellow-500 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
-                                        onclick="return confirm('Sembunyikan produk dari Hub?')">
-                                        🔻 Sembunyikan
-                                    </button>
-                                </form>
-                            @else
-                                <form action="{{ route('products.setVisible', $product) }}" method="POST" class="inline-block">
-                                    @csrf
-                                    @method('PUT')
-                                    <button type="submit"
-                                        class="bg-indigo-500 hover:bg-indigo-700 text-white px-3 py-1 rounded text-sm"
-                                        onclick="return confirm('Tampilkan produk ke Hub?')">
-                                        🔺 Tampilkan
-                                    </button>
-                                </form>
-                            @endif
+                            <a href="{{ route('products.edit', $product->id) }}" class="bg-green-500 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">Edit</a>
 
-                            <form action="{{ route('products.syncToHub', $product) }}" method="POST" class="inline-block">
-                                @csrf
-                                <button type="submit"
-                                    class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm"
-                                    onclick="return confirm('Sinkronkan produk ke Hub?')">
-                                    🔄 Sync ke Hub
-                                </button>
-                            </form>
-
-                            <a href="{{ route('products.edit', $product) }}"
-                                class="bg-green-500 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">
-                                Edit
-                            </a>
-
-                            <form action="{{ route('products.destroy', $product) }}" method="POST" class="inline-block"
-                                onsubmit="return confirm('Yakin ingin menghapus produk ini?');">
+                            <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus produk ini?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit"
-                                    class="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
-                                    Hapus
-                                </button>
+                                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">Hapus</button>
                             </form>
+
+                            <form action="{{ route('products.syncToHub', $product->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Sinkronkan ke Hub?')">
+                                @csrf
+                                <button type="submit" class="bg-indigo-500 hover:bg-indigo-700 text-white px-3 py-1 rounded text-sm">🔄 Sync</button>
+                            </form>
+
+                            @if ($product->is_active)
+                                <form action="{{ route('products.setInactive', $product->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Non-aktifkan produk di Hub?')">
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="submit" class="bg-yellow-500 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm">🔻 Non-Aktifkan</button>
+                                </form>
+                            @else
+                                <form action="{{ route('products.setActive', $product->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Aktifkan produk di Hub?')">
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">🔺 Aktifkan</button>
+                                </form>
+                            @endif
                         </td>
                     </tr>
                 @endforeach

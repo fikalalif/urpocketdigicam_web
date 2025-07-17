@@ -3,32 +3,31 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use phpDocumentor\Reflection\Types\Nullable;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->uuid("id")->primary();
-            $table->uuid("category_id");
-            $table->string("name");
-            $table->decimal("price", 12, 2); // Maks 9999999999.99
-            $table->string("description")->nullable();
-            $table->integer("stock")->default(0);
-            $table->string("image")->nullable();
-            $table->timestamps();
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->decimal('price', 15, 2)->default(0);
+            $table->unsignedInteger('stock')->default(0);
+            $table->string('sku')->nullable();
+            $table->string('image')->nullable();
+            $table->decimal('weight', 8, 2)->default(0);
+            $table->boolean('is_active')->default(true);
+            $table->boolean('is_visible')->default(true);
+            $table->string('hub_product_id')->nullable();
 
-            $table->foreign("category_id")->references("id")->on("categories")->onDelete("cascade");
+            $table->uuid('category_id')->nullable();
+            $table->foreign('category_id')->references('id')->on('categories')->nullOnDelete();
+
+            $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('products');

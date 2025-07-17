@@ -3,33 +3,43 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 use App\Models\Product;
 use App\Models\Category;
-use Illuminate\Support\Str;
 
 class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        $categories = Category::all();
+        $imageDir = public_path('storage/products'); // asumsi file gambar dipindahkan ke sini
+        $files = scandir($imageDir);
 
-        foreach ($categories as $category) {
-            for ($i = 1; $i <= 3; $i++) {
-                Product::create([
-                    'id' => (string) Str::uuid(),
-                    'name' => $category->name . ' Model ' . $i,
-                    'description' => 'Deskripsi produk ' . $category->name . ' Model ' . $i,
-                    'price' => rand(1000000, 50000000),
-                    'stock' => rand(5, 20),
-                    'sku' => strtoupper(substr($category->name, 0, 3)) . '-' . rand(1000, 9999),
-                    'image_url' => 'https://via.placeholder.com/300?text=' . urlencode($category->name . ' ' . $i),
-                    'weight' => rand(500, 3000),
-                    'is_active' => true,
-                    'is_visible' => true,
-                    'hub_product_id' => null,
-                    'category_id' => $category->id,
-                ]);
+        foreach ($files as $file) {
+            if (!in_array(pathinfo($file, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png'])) {
+                continue;
             }
+
+            $fileName = pathinfo($file, PATHINFO_FILENAME);
+            $brand = ucfirst(strtok($fileName, ' ')); // ambil kata pertama sebagai kategori
+
+            $category = Category::where('name', $brand)->first();
+            if (!$category) continue;
+
+            Product::updateOrCreate([
+                'name' => $fileName,
+            ], [
+                'id' => (string) Str::uuid(),
+                'category_id' => $category->id,
+                'description' => 'Produk ' . $fileName,
+                'price' => rand(500000, 2500000),
+                'stock' => rand(5, 25),
+                'sku' => strtoupper(Str::random(8)),
+                'weight' => rand(200, 1200) / 10, // gram
+                'image' => 'products/' . $file,
+                'hub_product_id' => null,
+                'is_active' => true,
+                'is_visible' => true,
+            ]);
         }
     }
 }

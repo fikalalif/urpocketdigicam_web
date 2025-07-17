@@ -7,10 +7,12 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
+    private const HUB_URL = 'https://api.phb-umkm.my.id/api/product-category';
+    private const PRODUCT_HUB_URL = 'https://api.phb-umkm.my.id/api/product';
+
     public function index()
     {
         $categories = Category::latest()->paginate(10);
@@ -27,18 +29,14 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
             'description' => 'nullable|string',
+            'is_visible' => 'boolean',
         ]);
 
-        $validated['id'] = Str::uuid();
+        $validated['is_visible'] = $request->has('is_visible');
 
         Category::create($validated);
 
         return redirect()->route('categories.index')->with('success', '✅ Kategori berhasil ditambahkan.');
-    }
-
-    public function show(Category $category)
-    {
-        return view('categories.show', compact('category'));
     }
 
     public function edit(Category $category)
@@ -51,7 +49,10 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'description' => 'nullable|string',
+            'is_visible' => 'boolean',
         ]);
+
+        $validated['is_visible'] = $request->has('is_visible');
 
         $category->update($validated);
 
@@ -62,8 +63,6 @@ class CategoryController extends Controller
     {
         try {
             $category->delete();
-
-            // ✅ Hapus juga hub_product_id semua produk di kategori ini (optional)
             Product::where('category_id', $category->id)->update(['hub_product_id' => null]);
 
             return redirect()->route('categories.index')->with('success', '✅ Kategori & produk berhasil dihapus.');
@@ -75,63 +74,77 @@ class CategoryController extends Controller
 
     public function syncToHub(Category $category)
     {
-        try {
-            $response = Http::post(env('HUB_API_URL') . '/product-category/sync', [
-                'client_id' => env('CLIENT_ID'),
-                'client_secret' => env('CLIENT_SECRET'),
-                'seller_product_category_id' => (string) $category->id,
-                'name' => $category->name,
-                'description' => $category->description ?? '-',
-                'is_active' => true,
-            ]);
-
-            if ($response->successful() && isset($response['product_category_id'])) {
-                $category->update([
-                    'hub_category_id' => $response['product_category_id'],
-                    'is_active' => true,
-                ]);
-
-                return back()->with('success', '✅ Kategori berhasil disinkronkan ke Hub.');
-            }
-
-            Log::error('❌ Gagal Sinkronisasi Kategori ke Hub', ['response' => $response->body()]);
-            return back()->with('error', '❌ Gagal sinkronisasi kategori ke Hub.');
-        } catch (\Exception $e) {
-            Log::error('❌ Exception Sinkron Kategori ke Hub', ['error' => $e->getMessage()]);
-            return back()->with('error', '❌ Terjadi kesalahan saat sinkronisasi ke Hub.');
-        }
+        return $this->syncCategoryStatus($category, true);
     }
 
     public function deactivateOnHub(Category $category)
     {
-        if (!$category->hub_category_id) {
+        return $this->syncCategoryStatus($category, false);
+    }
+
+    private function syncCategoryStatus(Category $category, bool $status)
+    {
+        if (!$status && !$category->hub_category_id) {
             return back()->with('error', '❌ Kategori belum pernah disinkronkan ke Hub.');
         }
 
         try {
-            $response = Http::post(env('HUB_API_URL') . '/product-category/sync', [
+            $response = Http::post(self::HUB_URL . '/sync', [
                 'client_id' => env('CLIENT_ID'),
                 'client_secret' => env('CLIENT_SECRET'),
                 'seller_product_category_id' => (string) $category->id,
                 'name' => $category->name,
                 'description' => $category->description ?? '-',
-                'is_active' => false,
+                'is_active' => $status,
             ]);
 
             if ($response->successful()) {
-                $category->update(['is_active' => false]);
+                $category->update([
+                    'is_active' => $status,
+                    'hub_category_id' => $category->hub_category_id ?? $response['product_category_id'] ?? null,
+                ]);
 
-                // ✅ Cascade: Nonaktifkan semua produk dari kategori ini
-                Product::where('category_id', $category->id)->update(['is_visible' => false]);
+                // ✅ Update & Sync semua produk di kategori ini
+                $products = Product::where('category_id', $category->id)->get();
 
-                return back()->with('success', '✅ Kategori & produk terkait berhasil dinonaktifkan di Hub.');
+                foreach ($products as $product) {
+                    $product->update(['is_active' => $status]);
+                    $this->syncProductToHub($product, $status);
+                }
+
+                $msg = $status ? '✅ Kategori & semua produk berhasil diaktifkan di Hub.' : '✅ Kategori & semua produk berhasil dinonaktifkan di Hub.';
+                return back()->with('success', $msg);
             }
 
-            Log::error('❌ Gagal Nonaktifkan Kategori di Hub', ['status' => $response->status(), 'response' => $response->body()]);
-            return back()->with('error', '❌ Gagal menonaktifkan kategori di Hub.');
+            Log::error('❌ Gagal Sinkronisasi Kategori ke Hub', ['response' => $response->body()]);
+            return back()->with('error', '❌ Gagal sinkronisasi kategori ke Hub.');
+
         } catch (\Exception $e) {
-            Log::error('❌ Exception Nonaktifkan Kategori di Hub', ['error' => $e->getMessage()]);
-            return back()->with('error', '❌ Terjadi kesalahan saat menonaktifkan kategori di Hub.');
+            Log::error('❌ Exception Sinkron Kategori ke Hub', ['error' => $e->getMessage()]);
+            return back()->with('error', '❌ Terjadi kesalahan saat sinkronisasi.');
+        }
+    }
+
+    private function syncProductToHub(Product $product, bool $status)
+    {
+        try {
+            Http::post(self::PRODUCT_HUB_URL . '/sync', [
+                'client_id' => env('CLIENT_ID'),
+                'client_secret' => env('CLIENT_SECRET'),
+                'seller_product_id' => (string) $product->id,
+                'name' => $product->name,
+                'description' => $product->description ?? '-',
+                'price' => $product->price,
+                'stock' => $product->stock,
+                'sku' => $product->sku,
+                'image_url' => $product->image,
+                'weight' => $product->weight,
+                'is_active' => $status,
+                'is_visible' => $product->stock > 0 ? $product->is_visible : false,
+                'category_id' => optional($product->category)->hub_category_id,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('❌ Gagal Sync Produk dari CategoryController ke Hub', ['error' => $e->getMessage()]);
         }
     }
 }

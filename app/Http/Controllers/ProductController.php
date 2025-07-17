@@ -35,14 +35,15 @@ class ProductController extends Controller
             'category_id' => 'nullable|exists:categories,id',
         ]);
 
-        $validated['is_active'] = $request->has('is_active');
-        $validated['is_visible'] = true;
+        $validated['is_visible'] = $request->has('is_visible');
+        $validated['is_active'] = true;
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('products', 'public');
         }
 
-        Product::create($validated);
+        $product = Product::create($validated);
+        $this->syncToHub($product);
 
         return redirect()->route('products.index')->with('success', '✅ Produk berhasil ditambahkan.');
     }
@@ -66,13 +67,14 @@ class ProductController extends Controller
             'category_id' => 'nullable|exists:categories,id',
         ]);
 
-        $validated['is_active'] = $request->has('is_active');
+        $validated['is_visible'] = $request->has('is_visible');
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('products', 'public');
         }
 
         $product->update($validated);
+        $this->syncToHub($product);
 
         return redirect()->route('products.index')->with('success', '✅ Produk berhasil diperbarui.');
     }
@@ -80,7 +82,7 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         try {
-            $product->update(['hub_product_id' => null]);
+            $this->deleteFromHub($product);
             $product->delete();
             return redirect()->route('products.index')->with('success', '✅ Produk berhasil dihapus.');
         } catch (\Exception $e) {
@@ -88,77 +90,31 @@ class ProductController extends Controller
             return redirect()->route('products.index')->with('error', '❌ Terjadi kesalahan saat menghapus produk.');
         }
     }
-    public function setVisible(Product $product)
+
+    public function setActive(Product $product)
     {
-        if ($product->category && !$product->category->is_active) {
-            return back()->with('error', '❌ Tidak bisa tampilkan, kategori tidak aktif.');
-        }
-
-        $product->update(['is_visible' => true]);
-
-        try {
-            Http::post(env('HUB_API_URL') . '/product/sync', [
-                'client_id' => env('CLIENT_ID'),
-                'client_secret' => env('CLIENT_SECRET'),
-                'seller_product_id' => (string) $product->id,
-                'name' => $product->name,
-                'description' => $product->description ?? '-',
-                'price' => $product->price,
-                'stock' => $product->stock,
-                'sku' => $product->sku,
-                'image_url' => $product->image,
-                'weight' => $product->weight,
-                'is_active' => $product->is_active,
-                'is_visible' => true,
-                'category_id' => optional($product->category)->hub_category_id,
-            ]);
-        } catch (\Exception $e) {
-            Log::error('❌ Gagal Set Visible Produk di Hub', ['error' => $e->getMessage()]);
-        }
-
-        return back()->with('success', '✅ Produk berhasil ditampilkan di Hub.');
+        $product->update(['is_active' => true]);
+        $this->syncToHub($product);
+        return back()->with('success', '✅ Produk berhasil diaktifkan di Hub.');
     }
 
-    public function setInvisible(Product $product)
+    public function setInactive(Product $product)
     {
-        if ($product->category && !$product->category->is_active) {
-            return back()->with('error', '❌ Tidak bisa sembunyikan, kategori tidak aktif.');
-        }
-
-        $product->update(['is_visible' => false]);
-
-        try {
-            Http::post(env('HUB_API_URL') . '/product/sync', [
-                'client_id' => env('CLIENT_ID'),
-                'client_secret' => env('CLIENT_SECRET'),
-                'seller_product_id' => (string) $product->id,
-                'name' => $product->name,
-                'description' => $product->description ?? '-',
-                'price' => $product->price,
-                'stock' => $product->stock,
-                'sku' => $product->sku,
-                'image_url' => $product->image,
-                'weight' => $product->weight,
-                'is_active' => $product->is_active,
-                'is_visible' => false,
-                'category_id' => optional($product->category)->hub_category_id,
-            ]);
-        } catch (\Exception $e) {
-            Log::error('❌ Gagal Set Invisible Produk di Hub', ['error' => $e->getMessage()]);
-        }
-
-        return back()->with('success', '✅ Produk berhasil disembunyikan di Hub.');
+        $product->update(['is_active' => false]);
+        $this->syncToHub($product);
+        return back()->with('success', '✅ Produk berhasil dinonaktifkan di Hub.');
     }
-
 
     public function syncProductToHub(Product $product)
     {
-        try {
-            if ($product->category && !$product->category->is_active) {
-                return back()->with('error', '❌ Kategori produk tidak aktif. Tidak bisa sync ke Hub.');
-            }
+        $this->syncToHub($product);
+        return back()->with('success', '✅ Produk berhasil disinkronkan ke Hub.');
+    }
 
-            $response = Http::post(env('HUB_API_URL') . '/product/sync', [
+    private function syncToHub(Product $product)
+    {
+        try {
+            Http::post('https://api.phb-umkm.my.id/api/product/sync', [
                 'client_id' => env('CLIENT_ID'),
                 'client_secret' => env('CLIENT_SECRET'),
                 'seller_product_id' => (string) $product->id,
@@ -173,51 +129,21 @@ class ProductController extends Controller
                 'is_visible' => $product->is_visible,
                 'category_id' => optional($product->category)->hub_category_id,
             ]);
-
-            if ($response->successful() && isset($response['product_id'])) {
-                $product->update(['hub_product_id' => $response['product_id']]);
-                return back()->with('success', '✅ Produk berhasil disinkronkan ke Hub.');
-            }
-
-            Log::error('❌ Gagal Sync Produk ke Hub', ['response' => $response->body()]);
-            return back()->with('error', '❌ Gagal sinkronisasi produk ke Hub.');
         } catch (\Exception $e) {
-            Log::error('❌ Exception Sync Produk ke Hub', ['error' => $e->getMessage()]);
-            return back()->with('error', '❌ Terjadi kesalahan saat sinkronisasi produk ke Hub.');
+            Log::error('❌ Gagal Sync Produk ke Hub', ['error' => $e->getMessage()]);
         }
     }
 
-    public function deactivateOnHub(Product $product)
+    private function deleteFromHub(Product $product)
     {
-        if ($product->category && !$product->category->is_active) {
-            return response()->json(['message' => '❌ Tidak bisa nonaktifkan, kategori tidak aktif.'], 400);
-        }
-
-        $product->update([
-            'is_active' => false,
-            'is_visible' => false
-        ]);
-
         try {
-            Http::post(env('HUB_API_URL') . '/product/sync', [
+            Http::post('https://api.phb-umkm.my.id/api/product/delete', [
                 'client_id' => env('CLIENT_ID'),
                 'client_secret' => env('CLIENT_SECRET'),
                 'seller_product_id' => (string) $product->id,
-                'name' => $product->name,
-                'description' => $product->description ?? '-',
-                'price' => $product->price,
-                'stock' => $product->stock,
-                'sku' => $product->sku,
-                'image_url' => $product->image,
-                'weight' => $product->weight,
-                'is_active' => false,
-                'is_visible' => false, // <- ini penting buat nyocokin di Hub
-                'category_id' => optional($product->category)->hub_category_id,
             ]);
         } catch (\Exception $e) {
-            Log::error('❌ Gagal Nonaktifkan Produk di Hub', ['error' => $e->getMessage()]);
+            Log::error('❌ Gagal Hapus Produk di Hub', ['error' => $e->getMessage()]);
         }
-
-        return response()->json(['message' => '✅ Produk berhasil dinonaktifkan di Hub']);
     }
 }

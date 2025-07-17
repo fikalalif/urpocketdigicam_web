@@ -76,7 +76,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
 <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
     <div class="w-full max-w-xl bg-white rounded-xl shadow-lg p-10 space-y-8">
         <div class="flex flex-col items-center mb-6">
-            <img src="{{ asset('images/cam.jpg') }}" alt="URPOCKETDIGICAM Logo" class="w-14 h-14 mb-2">
+            <img src="{{ asset('images/cam.jpg') }}" alt="URPOCKETDIGICAM Logo" class="w-14 h-13 mb-2">
             <h2 class="text-2xl font-bold text-gray-900 mb-1">{{ __('Log in to your account') }}</h2>
             <p class="text-gray-500">{{ __('Enter your email and password below to log in') }}</p>
         </div>
