@@ -387,12 +387,6 @@
                         <span
                             class="absolute -bottom-1 left-0 w-0 h-0.5 bg-pink-600 transition-all group-hover:w-full"></span>
                     </button>
-                    <button @click="scrollToSection('brands')"
-                        class="text-gray-700 hover:text-pink-600 font-medium transition-colors relative group">
-                        Brands
-                        <span
-                            class="absolute -bottom-1 left-0 w-0 h-0.5 bg-pink-600 transition-all group-hover:w-full"></span>
-                    </button>
                     <button @click="scrollToSection('contact')"
                         class="text-gray-700 hover:text-pink-600 font-medium transition-colors relative group">
                         Contact
