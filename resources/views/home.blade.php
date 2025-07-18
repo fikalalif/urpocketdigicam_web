@@ -5,19 +5,25 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>URPOCKETDIGICAM - Your Pocket's Best Digital Camera Collection</title>
-    <meta name="description"
-        content="Discover premium digital cameras, lenses, and photography equipment. From pocket cameras to professional DSLRs - find your perfect shot with trusted brands.">
-    <meta name="keywords"
-        content="digital camera, photography equipment, Canon, Sony, Nikon, Fujifilm, camera store, professional photography, pocket camera, mirrorless camera, DSLR">
+    <meta name="description" content="Discover premium digital cameras, lenses, and photography equipment.">
+    <meta name="keywords" content="digital camera, photography, Canon, Sony, Nikon, Fujifilm, camera store">
     <meta name="author" content="URPOCKETDIGICAM">
-    <!-- Open Graph / Facebook -->
+
+    <link rel="icon" href="{{ asset('favicon-32x32.png') }}" type="image/png">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+
+
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="URPOCKETDIGICAM - Your Pocket's Best Digital Camera Collection">
     <meta property="og:description"
         content="Discover premium digital cameras and photography equipment from trusted brands.">
     <meta property="og:image" content="{{ asset('images/products/cam1.jpg') }}">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <style>
         /* ===== CUSTOM PIXEL AESTHETIC STYLES ===== */
         :root {
