@@ -13,9 +13,14 @@
     <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
         <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-        <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
-            <x-app-logo />
+        <a href="{{ route('dashboard') }}" class="flex items-center gap-1 p-1" wire:navigate>
+            <img src="{{ asset('images/cam.jpg') }}" alt="Logo" class="w-9 h-7 rounded" />
+            <span class="text-base font-bold text-gray-900 dark:text-white leading-none">
+                <span class="text-cyan-500">URPOCKET</span><span class="text-pink-600">DIGICAM</span>
+            </span>
         </a>
+
+
 
 
         <flux:navlist variant="outline">

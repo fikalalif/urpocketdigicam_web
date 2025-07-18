@@ -1,23 +1,44 @@
-/.phpunit.cache
+# Laravel Directories
+/vendor
 /node_modules
-/public/build
-/public/hot
-/public/storage
 /storage/*.key
 /storage/pail
-/vendor
+/storage/framework/*
+!storage/framework/.gitignore
+/storage/logs/*
+!storage/logs/.gitignore
+/public/storage
+/public/hot
+/public/build
+/public/mix-manifest.json
+
+# Laravel Environment Files
 .env
-.env.backup
-.env.production
-.phpactor.json
-.phpunit.result.cache
-Homestead.json
-Homestead.yaml
+.env.*
+!.env.example
+
+# Cache & Test
+/.phpunit.cache
+/phpunit.result.cache
+
+# Composer / NPM / Yarn
+composer.lock
+package-lock.json
+yarn.lock
 npm-debug.log
 yarn-error.log
-/auth.json
-/.fleet
+auth.json
+
+# IDE & Editor Configs
+/.phpactor.json
 /.idea
-/.nova
 /.vscode
 /.zed
+/.fleet
+
+# Homestead
+Homestead.json
+Homestead.yaml
+
+# Laravel Nova (if used)
+/.nova

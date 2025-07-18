@@ -356,7 +356,7 @@
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex items-center space-x-0 animate-fade-in-up">
-                    <img src="{{ asset('images/cam.jpg') }}" class="w-11 h-10 " alt="logo">
+                    <img src="{{ asset('images/cam.jpg') }}" class="w-11 h-9 " alt="logo">
                     <a href="/" class="text-xl font-bold text-gray-900 hover:opacity-80 transition-opacity">
                         <span class="text-cyan-500">URPOCKET</span><span class="text-pink-600">DIGICAM</span>
                     </a>
@@ -453,12 +453,10 @@
                     class="block w-full text-left px-3 py-2 text-gray-700 hover:text-pink-600 hover:bg-pink-50 font-medium rounded-lg transition-colors">Products</button>
                 <button @click="scrollToSection('product-categories')"
                     class="block w-full text-left px-3 py-2 text-gray-700 hover:text-pink-600 hover:bg-pink-50 font-medium rounded-lg transition-colors">Categories</button>
-                <button @click="scrollToSection('brands')"
-                    class="block w-full text-left px-3 py-2 text-gray-700 hover:text-pink-600 hover:bg-pink-50 font-medium rounded-lg transition-colors">Brands</button>
                 <button @click="scrollToSection('contact')"
                     class="block w-full text-left px-3 py-2 text-gray-700 hover:text-pink-600 hover:bg-pink-50 font-medium rounded-lg transition-colors">Contact</button>
                 <div class="px-3 py-2 space-y-2">
-                    <a href="#"
+                    <a href="https://phb-umkm.my.id/"
                         class="block w-full text-center px-4 py-2 border-2 border-cyan-300 text-cyan-600 hover:bg-cyan-50 bg-transparent rounded-lg font-medium transition-colors">
                         Visit UMKM
                     </a>
@@ -478,15 +476,36 @@
         </div>
         <div class="absolute bottom-20 right-4 w-16 h-16 bg-cyan-200 rounded-lg pixel-border animate-float opacity-60 md:right-10"
             style="animation-delay: 1s;"></div>
-        {{-- <div
-            class="absolute top-1/2 left-1/4 w-12 h-12 bg-pink-300 rounded-full pixel-border animate-pulse-slow opacity-40">
-        </div> --}}
+        <div
+            class="absolute top-[60%] left-[40%] w-12 h-12 bg-pink-300 rounded-full pixel-border opacity-40 -translate-x-1/2 -translate-y-1/2 animate-floating">
+        </div>
+
+        <style>
+            @keyframes floating {
+                0% {
+                    transform: translate(-50%, -50%) translateY(0);
+                }
+
+                50% {
+                    transform: translate(-50%, -50%) translateY(-10px);
+                }
+
+                100% {
+                    transform: translate(-50%, -50%) translateY(0);
+                }
+            }
+
+            .animate-floating {
+                animation: floating 3s ease-in-out infinite;
+            }
+        </style>
+
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div class="animate-fade-in-up">
                     <div
                         class="inline-block bg-gradient-to-r from-pink-500 to-cyan-500 text-white px-4 py-2 rounded-full text-sm font-semibold mb-6 pixel-shadow animate-pulse-slow">
-                        ✨ Premium Camera Collection
+                        Premium Camera Collection
                     </div>
                     <h1 class="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight text-shadow">
                         Your Pocket's Best
@@ -903,7 +922,7 @@
         </div>
     </section> --}}
     <!-- ===== BRANDS SECTION ===== -->
-    <section id="categories" class="py-20 gradient-secondary" x-data="{
+    <section id="product-categories" class="py-20 gradient-secondary" x-data="{
         categories: [],
         loadingCategories: true,
         errorCategories: null,
@@ -1162,7 +1181,7 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="col-span-1 md:col-span-2">
                     <div class="flex items-center space-x-1 mb-4">
-                        <img src="{{ asset('images/camnobg.png') }}" class="w-11 h-10 " alt="logo">
+                        <img src="{{ asset('images/camnobg.png') }}" class="w-11 h-9 " alt="logo">
                         <span class="text-xl font-bold">
                             <span class="text-cyan-400">URPOCKET</span><span class="text-pink-400">DIGICAM</span>
                         </span>
