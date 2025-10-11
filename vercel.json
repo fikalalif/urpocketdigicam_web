@@ -1,18 +1,20 @@
 {
   "version": 2,
-  "builds": [
+  "buildCommand": "composer install && npm install && npm run build && php artisan config:cache",
+  "outputDirectory": "public",
+  "functions": {
+    "api/index.php": {
+      "runtime": "vercel-php@0.7.1"
+    }
+  },
+  "routes": [
     {
-      "src": "api/index.php",
-      "use": "vercel-php@0.7.1"
+      "src": "/build/(.*)",
+      "dest": "public/build/$1"
     },
     {
-      "src": "vite.config.js",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "public/build" }
+      "src": "/(.*)",
+      "dest": "/api/index.php"
     }
-  ],
-  "routes": [
-    { "src": "/build/(.*)", "dest": "/public/build/$1" },
-    { "src": "/(.*)", "dest": "/api/index.php" }
   ]
 }
