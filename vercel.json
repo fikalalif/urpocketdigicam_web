@@ -1,14 +1,18 @@
 {
   "version": 2,
-  "routes": [
+  "builds": [
     {
-      "src": "/build/(.*)",
-      "dest": "public/build/$1"
+      "src": "api/index.php",
+      "use": "vercel-php@0.7.1"
     },
     {
-      "src": "/(.*)",
-      "dest": "/api/index.php"
+      "src": "vite.config.js",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "public/build" }
     }
   ],
-  "outputDirectory": "public"
+  "routes": [
+    { "src": "/build/(.*)", "dest": "/public/build/$1" },
+    { "src": "/(.*)", "dest": "/api/index.php" }
+  ]
 }
