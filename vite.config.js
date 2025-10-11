@@ -23,9 +23,4 @@ export default defineConfig({
     server: {
         cors: true,
     },
-    resolve: {
-        alias: {
-            '~': path.resolve(__dirname, './'),
-        },
-    },
 });
