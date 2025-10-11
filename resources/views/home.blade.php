@@ -728,7 +728,7 @@
                                     </svg>
                                 </div>
                             @endif
-                            {{-- ==================== AKHIR PERUBAHAN ==================== --}}
+                            {{-- ==================== AKHIR PERUBAHAN ==================== ---}}
                             <!-- Stock Badge -->
                             <div class="absolute top-4 left-4">
                                 @if ($product->stock > 10)
