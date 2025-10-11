@@ -1,6 +1,9 @@
-import { defineConfig } from "vite";
+import {
+    defineConfig
+} from "vite";
 import laravel from "laravel-vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
+import path from 'path';
 
 export default defineConfig({
     theme: {
@@ -19,5 +22,10 @@ export default defineConfig({
     ],
     server: {
         cors: true,
+    },
+    resolve: {
+        alias: {
+            '~': path.resolve(__dirname, './'),
+        },
     },
 });

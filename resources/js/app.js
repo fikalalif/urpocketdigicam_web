@@ -1,5 +1,6 @@
 // Tambahkan baris ini di paling atas
-import '../../vendor/wire-elements/flux/dist/flux.css';
+// Ganti baris yang lama dengan yang ini
+import '~/vendor/wire-elements/flux/dist/flux.css';
 
 import './bootstrap';
 
