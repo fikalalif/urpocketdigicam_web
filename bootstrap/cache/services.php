@@ -25,20 +25,16 @@
     21 => 'Illuminate\\Validation\\ValidationServiceProvider',
     22 => 'Illuminate\\View\\ViewServiceProvider',
     23 => 'CloudinaryLabs\\CloudinaryLaravel\\CloudinaryServiceProvider',
-    24 => 'Laravel\\Pail\\PailServiceProvider',
-    25 => 'Laravel\\Sail\\SailServiceProvider',
-    26 => 'Laravel\\Sanctum\\SanctumServiceProvider',
-    27 => 'Laravel\\Tinker\\TinkerServiceProvider',
-    28 => 'Flux\\FluxServiceProvider',
-    29 => 'Livewire\\LivewireServiceProvider',
-    30 => 'Livewire\\Volt\\VoltServiceProvider',
-    31 => 'Carbon\\Laravel\\ServiceProvider',
-    32 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
-    33 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    34 => 'Pest\\Laravel\\PestServiceProvider',
-    35 => 'App\\Providers\\AppServiceProvider',
-    36 => 'App\\Providers\\VoltServiceProvider',
-    37 => 'CloudinaryLabs\\CloudinaryLaravel\\CloudinaryServiceProvider',
+    24 => 'Laravel\\Sanctum\\SanctumServiceProvider',
+    25 => 'Laravel\\Tinker\\TinkerServiceProvider',
+    26 => 'Flux\\FluxServiceProvider',
+    27 => 'Livewire\\LivewireServiceProvider',
+    28 => 'Livewire\\Volt\\VoltServiceProvider',
+    29 => 'Carbon\\Laravel\\ServiceProvider',
+    30 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    31 => 'App\\Providers\\AppServiceProvider',
+    32 => 'App\\Providers\\VoltServiceProvider',
+    33 => 'CloudinaryLabs\\CloudinaryLaravel\\CloudinaryServiceProvider',
   ),
   'eager' => 
   array (
@@ -53,18 +49,15 @@
     8 => 'Illuminate\\Session\\SessionServiceProvider',
     9 => 'Illuminate\\View\\ViewServiceProvider',
     10 => 'CloudinaryLabs\\CloudinaryLaravel\\CloudinaryServiceProvider',
-    11 => 'Laravel\\Pail\\PailServiceProvider',
-    12 => 'Laravel\\Sanctum\\SanctumServiceProvider',
-    13 => 'Flux\\FluxServiceProvider',
-    14 => 'Livewire\\LivewireServiceProvider',
-    15 => 'Livewire\\Volt\\VoltServiceProvider',
-    16 => 'Carbon\\Laravel\\ServiceProvider',
-    17 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
-    18 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    19 => 'Pest\\Laravel\\PestServiceProvider',
-    20 => 'App\\Providers\\AppServiceProvider',
-    21 => 'App\\Providers\\VoltServiceProvider',
-    22 => 'CloudinaryLabs\\CloudinaryLaravel\\CloudinaryServiceProvider',
+    11 => 'Laravel\\Sanctum\\SanctumServiceProvider',
+    12 => 'Flux\\FluxServiceProvider',
+    13 => 'Livewire\\LivewireServiceProvider',
+    14 => 'Livewire\\Volt\\VoltServiceProvider',
+    15 => 'Carbon\\Laravel\\ServiceProvider',
+    16 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    17 => 'App\\Providers\\AppServiceProvider',
+    18 => 'App\\Providers\\VoltServiceProvider',
+    19 => 'CloudinaryLabs\\CloudinaryLaravel\\CloudinaryServiceProvider',
   ),
   'deferred' => 
   array (
@@ -219,8 +212,6 @@
     'validator' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'validation.presence' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'Illuminate\\Contracts\\Validation\\UncompromisedVerifier' => 'Illuminate\\Validation\\ValidationServiceProvider',
-    'Laravel\\Sail\\Console\\InstallCommand' => 'Laravel\\Sail\\SailServiceProvider',
-    'Laravel\\Sail\\Console\\PublishCommand' => 'Laravel\\Sail\\SailServiceProvider',
     'command.tinker' => 'Laravel\\Tinker\\TinkerServiceProvider',
   ),
   'when' => 
@@ -262,9 +253,6 @@
     array (
     ),
     'Illuminate\\Validation\\ValidationServiceProvider' => 
-    array (
-    ),
-    'Laravel\\Sail\\SailServiceProvider' => 
     array (
     ),
     'Laravel\\Tinker\\TinkerServiceProvider' => 
