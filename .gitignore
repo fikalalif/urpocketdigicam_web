@@ -9,7 +9,7 @@
 !storage/logs/.gitignore
 /public/storage
 /public/hot
-/public/build
+!/public/build
 /public/mix-manifest.json
 
 # Laravel Environment Files
