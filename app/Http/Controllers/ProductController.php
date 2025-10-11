@@ -7,6 +7,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -30,7 +31,7 @@ class ProductController extends Controller
             'price' => 'required|numeric',
             'stock' => 'required|integer',
             'sku' => 'nullable|string|max:100',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'weight' => 'nullable|numeric',
             'category_id' => 'nullable|exists:categories,id',
         ]);
@@ -39,7 +40,8 @@ class ProductController extends Controller
         $validated['is_active'] = true;
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('products', 'public');
+            // Menggunakan disk default (cloudinary)
+            $validated['image'] = $request->file('image')->store('products');
         }
 
         $product = Product::create($validated);
@@ -62,7 +64,7 @@ class ProductController extends Controller
             'price' => 'required|numeric',
             'stock' => 'required|integer',
             'sku' => 'nullable|string|max:100',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'weight' => 'nullable|numeric',
             'category_id' => 'nullable|exists:categories,id',
         ]);
@@ -70,7 +72,12 @@ class ProductController extends Controller
         $validated['is_visible'] = $request->has('is_visible');
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('products', 'public');
+            // Hapus gambar lama jika ada
+            if ($product->image) {
+                Storage::delete($product->image);
+            }
+            // Simpan gambar baru
+            $validated['image'] = $request->file('image')->store('products');
         }
 
         $product->update($validated);
@@ -82,6 +89,11 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         try {
+            // Hapus gambar dari Cloudinary jika ada
+            if ($product->image) {
+                Storage::delete($product->image);
+            }
+
             $this->deleteFromHub($product);
             $product->delete();
             return redirect()->route('products.index')->with('success', '✅ Produk berhasil dihapus.');
@@ -91,6 +103,33 @@ class ProductController extends Controller
         }
     }
 
+    private function syncToHub(Product $product)
+    {
+        try {
+            // Dapatkan URL absolut dari Cloudinary
+            $imageUrl = $product->image ? Storage::url($product->image) : null;
+
+            Http::post('https://api.phb-umkm.my.id/api/product/sync', [
+                'client_id' => env('CLIENT_ID'),
+                'client_secret' => env('CLIENT_SECRET'),
+                'seller_product_id' => (string) $product->id,
+                'name' => $product->name,
+                'description' => $product->description ?? '-',
+                'price' => $product->price,
+                'stock' => $product->stock,
+                'sku' => $product->sku,
+                'image_url' => $imageUrl, // Kirim URL absolut
+                'weight' => $product->weight,
+                'is_active' => $product->is_active,
+                'is_visible' => $product->is_visible,
+                'category_id' => optional($product->category)->hub_category_id,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('❌ Gagal Sync Produk ke Hub', ['error' => $e->getMessage()]);
+        }
+    }
+
+    // ... sisa method lainnya tidak perlu diubah ...
     public function setActive(Product $product)
     {
         $product->update(['is_active' => true]);
@@ -109,29 +148,6 @@ class ProductController extends Controller
     {
         $this->syncToHub($product);
         return back()->with('success', '✅ Produk berhasil disinkronkan ke Hub.');
-    }
-
-    private function syncToHub(Product $product)
-    {
-        try {
-            Http::post('https://api.phb-umkm.my.id/api/product/sync', [
-                'client_id' => env('CLIENT_ID'),
-                'client_secret' => env('CLIENT_SECRET'),
-                'seller_product_id' => (string) $product->id,
-                'name' => $product->name,
-                'description' => $product->description ?? '-',
-                'price' => $product->price,
-                'stock' => $product->stock,
-                'sku' => $product->sku,
-                'image_url' => $product->image,
-                'weight' => $product->weight,
-                'is_active' => $product->is_active,
-                'is_visible' => $product->is_visible,
-                'category_id' => optional($product->category)->hub_category_id,
-            ]);
-        } catch (\Exception $e) {
-            Log::error('❌ Gagal Sync Produk ke Hub', ['error' => $e->getMessage()]);
-        }
     }
 
     private function deleteFromHub(Product $product)

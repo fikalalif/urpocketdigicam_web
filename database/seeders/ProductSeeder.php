@@ -35,7 +35,7 @@ class ProductSeeder extends Seeder
                 'stock' => rand(5, 25),
                 'sku' => strtoupper(Str::random(8)),
                 'weight' => rand(200, 1200) / 10, // gram
-                'image' => 'products/' . $file,
+                'image' => 'products/'.$file,
                 'hub_product_id' => null,
                 'is_active' => true,
                 'is_visible' => true,

@@ -324,37 +324,37 @@
 </head>
 
 <body class="bg-white font-sans antialiased" x-data="{
-          isMenuOpen: false,
-          scrollY: 0,
-          init() {
-              window.addEventListener('scroll', () => {
-                  this.scrollY = window.pageYOffset;
-              });
-              window.addEventListener('resize', () => {
-                  if (window.innerWidth >= 768) {
-                      this.isMenuOpen = false;
-                  }
-              });
-              document.addEventListener('keydown', (e) => {
-                  if (e.key === 'Escape' && this.isMenuOpen) {
-                      this.isMenuOpen = false;
-                  }
-              });
-          },
-          scrollToSection(sectionId) {
-              const element = document.getElementById(sectionId);
-              if (element) {
-                  const offset = 80;
-                  const elementPosition = element.getBoundingClientRect().top;
-                  const offsetPosition = elementPosition + window.pageYOffset - offset;
-                  window.scrollTo({
-                      top: offsetPosition,
-                      behavior: 'smooth'
-                  });
-              }
-              this.isMenuOpen = false;
-          }
-      }">
+    isMenuOpen: false,
+    scrollY: 0,
+    init() {
+        window.addEventListener('scroll', () => {
+            this.scrollY = window.pageYOffset;
+        });
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                this.isMenuOpen = false;
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.isMenuOpen) {
+                this.isMenuOpen = false;
+            }
+        });
+    },
+    scrollToSection(sectionId) {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            const offset = 80;
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - offset;
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+        this.isMenuOpen = false;
+    }
+}">
     <!-- ===== NAVIGATION BAR ===== -->
     <nav class="fixed top-0 w-full z-50 transition-all duration-300"
         :class="scrollY > 50 ? 'navbar-scrolled pixel-border-light' : 'bg-white'">
@@ -424,11 +424,13 @@
                 <div class="md:hidden">
                     <button @click="isMenuOpen = !isMenuOpen"
                         class="p-2 text-gray-600 hover:text-pink-600 transition-colors hover-scale">
-                        <svg x-show="!isMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg x-show="!isMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
-                        <svg x-show="isMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg x-show="isMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -546,21 +548,21 @@
                     </div>
                 </div>
                 <div class="relative animate-slide-in-right" x-data="{
-         images: [
-             '{{ asset('images/cam1.jpg') }}',
-             '{{ asset('images/cam2.jpg') }}',
-             '{{ asset('images/cam3.jpg') }}'
-         ],
-         current: 0,
-         get currentImage() {
-             return this.images[this.current];
-         },
-         startRotation() {
-             setInterval(() => {
-                 this.current = (this.current + 1) % this.images.length;
-             }, 3000);
-         }
-     }" x-init="startRotation()">
+                    images: [
+                        '{{ asset('images/cam1.jpg') }}',
+                        '{{ asset('images/cam2.jpg') }}',
+                        '{{ asset('images/cam3.jpg') }}'
+                    ],
+                    current: 0,
+                    get currentImage() {
+                        return this.images[this.current];
+                    },
+                    startRotation() {
+                        setInterval(() => {
+                            this.current = (this.current + 1) % this.images.length;
+                        }, 3000);
+                    }
+                }" x-init="startRotation()">
                     <div
                         class="w-full h-96 gradient-primary rounded-2xl pixel-border flex items-center justify-center relative overflow-hidden">
 
@@ -707,15 +709,17 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @forelse($products as $index => $product)
                     <div class="product-card pixel-border hover-lift animate-fade-in-up"
-                        style="animation-delay: {{ ($index * 0.1) . 's' }};">
+                        style="animation-delay: {{ $index * 0.1 . 's' }};">
                         <div class="aspect-square bg-gray-100 overflow-hidden relative">
-                            @if($product->image_url)
-                                <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
-                                    class="product-image w-full h-full object-cover" loading="lazy"
-                                    onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNTAgMTAwQzE2MS4wNDYgMTAwIDE3MCAyMDguOTU0IDE3MCAyMjBDMTcwIDIzMS4wNDYgMTYxLjA0NiAyNDAgMTUwIDI0MEMxMzguOTU0IDI0MCAxMzAgMjMxLjA0NiAxMzAgMjIwQzEzMCAyMDguOTU0IDEzOC45NTQgMjAwIDE1MCAyMDBaIiBzdHJva2U9IiM5Q0EzQUYiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNMTAwIDEwMEgxMDBIMjAwSDIwMFYxMDBWMjAwVjIwMEgxMDBIMTAwVjEwMFoiIHN0cm9rZT0iIzlDQTNBRiIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUNBM0FGIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPkNhbWVyYTwvdGV4dD4KPC9zdmc+'">
+                            {{-- ==================== PERUBAHAN UTAMA ==================== --}}
+                            @if ($product->image)
+                                <img src="{{ Storage::disk('cloudinary')->url($product->image) }}"
+                                    alt="{{ $product->name }}" class="product-image w-full h-full object-cover"
+                                    loading="lazy">
                             @else
                                 <div class="w-full h-full flex items-center justify-center bg-gray-200">
-                                    <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z">
                                         </path>
@@ -724,9 +728,10 @@
                                     </svg>
                                 </div>
                             @endif
+                            {{-- ==================== AKHIR PERUBAHAN ==================== --}}
                             <!-- Stock Badge -->
                             <div class="absolute top-4 left-4">
-                                @if($product->stock > 10)
+                                @if ($product->stock > 10)
                                     <span
                                         class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium pixel-border-light">
                                         In Stock ({{ $product->stock }})
@@ -744,9 +749,10 @@
                                 @endif
                             </div>
                             <!-- New Badge for recently added products -->
-                            @if($product->created_at->diffInDays(now()) <= 7)
+                            @if ($product->created_at->diffInDays(now()) <= 7)
                                 <div class="absolute top-4 right-4">
-                                    <span class="bg-pink-600 text-white px-3 py-1 rounded-full text-sm font-bold pixel-shadow">
+                                    <span
+                                        class="bg-pink-600 text-white px-3 py-1 rounded-full text-sm font-bold pixel-shadow">
                                         NEW
                                     </span>
                                 </div>
@@ -758,7 +764,7 @@
                                     class="text-sm text-cyan-600 font-medium bg-cyan-50 px-2 py-1 rounded pixel-border-light">
                                     {{ $product->category->name ?? 'Camera' }}
                                 </span>
-                                @if($product->sku)
+                                @if ($product->sku)
                                     <span class="text-xs text-gray-500">SKU: {{ $product->sku }}</span>
                                 @else
                                     <span class="text-xs text-gray-500">ID: {{ substr($product->id, 0, 8) }}...</span>
@@ -767,7 +773,7 @@
                             <h3 class="text-lg font-semibold text-gray-900 mb-2 hover:text-pink-600 transition-colors">
                                 {{ $product->name }}
                             </h3>
-                            @if($product->description)
+                            @if ($product->description)
                                 <p class="text-gray-600 text-sm mb-4 line-clamp-2">
                                     {{ $product->description }}
                                 </p>
@@ -777,7 +783,7 @@
                                     <span class="text-2xl font-bold text-pink-600">
                                         Rp{{ number_format($product->price, 0, ',', '.') }}
                                     </span>
-                                    @if($product->stock > 0)
+                                    @if ($product->stock > 0)
                                         <span class="text-xs text-green-600 font-medium">{{ $product->stock }} units
                                             available</span>
                                     @endif
@@ -792,7 +798,7 @@
                             <div
                                 class="flex items-center justify-between mt-3 pt-3 border-t border-gray-100 text-xs text-gray-500">
                                 <span>Added {{ $product->created_at->diffForHumans() }}</span>
-                                @if($product->weight)
+                                @if ($product->weight)
                                     <span>{{ $product->weight }}kg</span>
                                 @endif
                             </div>
@@ -802,7 +808,8 @@
                     <div class="col-span-full text-center py-12">
                         <div
                             class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 pixel-border">
-                            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z">
                                 </path>
@@ -823,7 +830,7 @@
                     </div>
                 @endforelse
             </div>
-            @if($products->count() > 0)
+            @if ($products->count() > 0)
                 <div class="text-center mt-12">
                     <div class="inline-block bg-white rounded-lg p-6 pixel-border">
                         <p class="text-gray-600 mb-4">
@@ -895,7 +902,7 @@
                 ]
                 ];
                 @endphp
-                @foreach($categories as $index => $category)
+                @foreach ($categories as $index => $category)
                 <div class="category-card pixel-border hover-lift animate-fade-in-up"
                     style="animation-delay: {{ $index * 0.1 }}s;">
                     <div
@@ -955,9 +962,10 @@
 
             <!-- Loader -->
             <div x-show="loadingCategories" class="text-center py-8">
-                <svg class="animate-spin h-8 w-8 text-pink-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none"
-                    viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <svg class="animate-spin h-8 w-8 text-pink-600 mx-auto" xmlns="http://www.w3.org/2000/svg"
+                    fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                        stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                     </path>
@@ -990,7 +998,8 @@
                     class="col-span-full text-center py-12">
                     <div
                         class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 pixel-border">
-                        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z">
                             </path>
@@ -1018,31 +1027,31 @@
                         <div class="p-8">
                             <h3 class="text-2xl font-bold text-gray-900 mb-6">Send us a message</h3>
                             <form class="space-y-6" x-data="{
-        name: '',
-        email: '',
-        message: '',
-        isSubmitting: false,
-        async submitForm() {
-            if (!this.name || !this.email || !this.message) {
-                alert('Please fill in all fields');
-                return;
-            }
-            this.isSubmitting = true;
-            try {
-                // Simulate API call
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                // Reset form
-                this.name = '';
-                this.email = '';
-                this.message = '';
-                alert('Message sent successfully! We will get back to you soon.');
-            } catch (error) {
-                alert('Error sending message. Please try again.');
-            } finally {
-                this.isSubmitting = false;
-            }
-        }
-    }">
+                                name: '',
+                                email: '',
+                                message: '',
+                                isSubmitting: false,
+                                async submitForm() {
+                                    if (!this.name || !this.email || !this.message) {
+                                        alert('Please fill in all fields');
+                                        return;
+                                    }
+                                    this.isSubmitting = true;
+                                    try {
+                                        // Simulate API call
+                                        await new Promise(resolve => setTimeout(resolve, 1500));
+                                        // Reset form
+                                        this.name = '';
+                                        this.email = '';
+                                        this.message = '';
+                                        alert('Message sent successfully! We will get back to you soon.');
+                                    } catch (error) {
+                                        alert('Error sending message. Please try again.');
+                                    } finally {
+                                        this.isSubmitting = false;
+                                    }
+                                }
+                            }">
                                 <div>
                                     <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Name
                                         *</label>
@@ -1052,14 +1061,14 @@
                                 <div>
                                     <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email
                                         *</label>
-                                    <input type="email" id="email" x-model="email" placeholder="your@email.com"
-                                        class="contact-input w-full pixel-border-light" required>
+                                    <input type="email" id="email" x-model="email"
+                                        placeholder="your@email.com" class="contact-input w-full pixel-border-light"
+                                        required>
                                 </div>
                                 <div>
                                     <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Message
                                         *</label>
-                                    <textarea rows="4" id="message" x-model="message"
-                                        placeholder="Tell us about your photography needs..."
+                                    <textarea rows="4" id="message" x-model="message" placeholder="Tell us about your photography needs..."
                                         class="contact-input w-full pixel-border-light resize-none" required></textarea>
                                 </div>
                                 <button type="button" @click="submitForm()" :disabled="isSubmitting"
@@ -1068,8 +1077,8 @@
                                     <span x-show="isSubmitting" class="flex items-center justify-center">
                                         <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
                                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                                stroke-width="4" />
+                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="4" />
                                             <path class="opacity-75" fill="currentColor"
                                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                                         </svg>
@@ -1233,9 +1242,12 @@
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Support</h4>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Shipping Info</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Returns & Warranty</a>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Help Center</a>
+                        </li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Shipping
+                                Info</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Returns &
+                                Warranty</a>
                         </li>
                         <li><button @click="scrollToSection('contact')"
                                 class="text-gray-400 hover:text-white transition-colors">Contact Us</button></li>
@@ -1246,10 +1258,12 @@
                 <div class="flex flex-col md:flex-row justify-between items-center">
                     <p class="text-gray-400 text-sm">© {{ date('Y') }} URPOCKETDIGICAM. All rights reserved.</p>
                     <div class="flex space-x-6 mt-4 md:mt-0">
-                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Privacy
+                            Policy</a>
                         <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Terms of
                             Service</a>
-                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Cookie Policy</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Cookie
+                            Policy</a>
                     </div>
                 </div>
             </div>
@@ -1259,7 +1273,7 @@
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script>
         // ===== PERFORMANCE OPTIMIZATIONS =====
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Lazy load images
             const images = document.querySelectorAll('img[data-src]');
             const imageObserver = new IntersectionObserver((entries) => {

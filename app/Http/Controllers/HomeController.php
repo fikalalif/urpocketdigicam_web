@@ -11,6 +11,7 @@ class HomeController extends Controller
 {
     public function index()
     {
+
         $products = Product::where('is_visible', true)
             ->with('category')
             ->orderBy('created_at', 'desc')
