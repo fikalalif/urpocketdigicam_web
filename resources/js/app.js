@@ -2,7 +2,7 @@
 // Ganti baris yang lama dengan yang ini
 import '~/vendor/wire-elements/flux/dist/flux.css';
 
-import './bootstrap';
+import '~/resources/js/bootstrap.js';
 
 // ... sisa kode Anda
 import '../css/app.css';
