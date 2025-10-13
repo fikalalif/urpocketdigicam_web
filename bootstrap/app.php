@@ -20,6 +20,20 @@ $app = Application::configure(basePath: dirname(__DIR__))
         //
     })->create();
 
+$app->singleton('vite', function () {
+    $defaultManifest = public_path('build/manifest.json');
+    $vercelManifest = base_path('api/public/build/manifest.json');
+
+    if (file_exists($vercelManifest)) {
+        error_log('✅ Vite manifest found in api/public/build');
+        return new Vite('/api/public/build', $vercelManifest);
+    }
+
+    error_log('⚠️ Using default vite manifest');
+    return new Vite('/build', $defaultManifest);
+});
+
+
 // Langkah 2: Jika berjalan di Vercel...
 if (isset($_ENV['VERCEL'])) {
     // Tentukan path sementara
@@ -50,18 +64,6 @@ if (isset($_ENV['VERCEL'])) {
 
 // Langkah 3: Kembalikan aplikasi yang sudah siap
 
-$app->extend('vite', function () {
-    $defaultManifest = public_path('build/manifest.json');
-    $vercelManifest = base_path('api/public/build/manifest.json');
 
-    // Log buat debugging di runtime serverless
-    if (file_exists($vercelManifest)) {
-        error_log('✅ Vite manifest found in api/public/build');
-        return new Vite('/api/public/build', $vercelManifest);
-    }
-
-    error_log('⚠️ Using default vite manifest');
-    return new Vite('/build', $defaultManifest);
-});
 
 return $app;
