@@ -37,9 +37,10 @@
     33 => 'Pest\\Laravel\\PestServiceProvider',
     34 => 'CloudinaryLabs\\CloudinaryLaravel\\CloudinaryServiceProvider',
     35 => 'App\\Providers\\AppServiceProvider',
-    36 => 'App\\Providers\\AppServiceProvider',
-    37 => 'App\\Providers\\VoltServiceProvider',
-    38 => 'CloudinaryLabs\\CloudinaryLaravel\\CloudinaryServiceProvider',
+    36 => 'App\\Providers\\ViteServiceProvider',
+    37 => 'App\\Providers\\AppServiceProvider',
+    38 => 'App\\Providers\\VoltServiceProvider',
+    39 => 'CloudinaryLabs\\CloudinaryLaravel\\CloudinaryServiceProvider',
   ),
   'eager' => 
   array (
@@ -65,9 +66,10 @@
     19 => 'Pest\\Laravel\\PestServiceProvider',
     20 => 'CloudinaryLabs\\CloudinaryLaravel\\CloudinaryServiceProvider',
     21 => 'App\\Providers\\AppServiceProvider',
-    22 => 'App\\Providers\\AppServiceProvider',
-    23 => 'App\\Providers\\VoltServiceProvider',
-    24 => 'CloudinaryLabs\\CloudinaryLaravel\\CloudinaryServiceProvider',
+    22 => 'App\\Providers\\ViteServiceProvider',
+    23 => 'App\\Providers\\AppServiceProvider',
+    24 => 'App\\Providers\\VoltServiceProvider',
+    25 => 'CloudinaryLabs\\CloudinaryLaravel\\CloudinaryServiceProvider',
   ),
   'deferred' => 
   array (
