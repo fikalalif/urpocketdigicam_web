@@ -3,13 +3,14 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Foundation\Vite;
 
 // Langkah 1: Buat aplikasi seperti biasa
 $app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/api.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        api: __DIR__ . '/../routes/api.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
@@ -48,4 +49,15 @@ if (isset($_ENV['VERCEL'])) {
 }
 
 // Langkah 3: Kembalikan aplikasi yang sudah siap
+
+$app->extend('vite', function () {
+    $defaultManifest = public_path('build/manifest.json');
+    $vercelManifest = base_path('api/public/build/manifest.json');
+
+    if (file_exists($vercelManifest)) {
+        return new Vite('/api/public/build', $vercelManifest);
+    }
+
+    return new Vite('/build', $defaultManifest);
+});
 return $app;
