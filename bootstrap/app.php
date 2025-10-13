@@ -64,6 +64,6 @@ if (isset($_ENV['VERCEL'])) {
 
 // Langkah 3: Kembalikan aplikasi yang sudah siap
 
-
+require_once __DIR__.'/fix_vite_manifest.php';
 
 return $app;
