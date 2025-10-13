@@ -54,10 +54,14 @@ $app->extend('vite', function () {
     $defaultManifest = public_path('build/manifest.json');
     $vercelManifest = base_path('api/public/build/manifest.json');
 
+    // Log buat debugging di runtime serverless
     if (file_exists($vercelManifest)) {
+        error_log('✅ Vite manifest found in api/public/build');
         return new Vite('/api/public/build', $vercelManifest);
     }
 
+    error_log('⚠️ Using default vite manifest');
     return new Vite('/build', $defaultManifest);
 });
+
 return $app;
