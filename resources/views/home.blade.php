@@ -713,9 +713,16 @@
                         <div class="aspect-square bg-gray-100 overflow-hidden relative">
                             {{-- ==================== PERUBAHAN UTAMA ==================== --}}
                             @if ($product->image)
-                                <img src="{{ Storage::disk('cloudinary')->url($product->image) }}"
-                                    alt="{{ $product->name }}" class="product-image w-full h-full object-cover"
-                                    loading="lazy">
+                                @if (Str::startsWith($product->image, 'http'))
+                                    <img src="{{ $product->image }}" alt="{{ $product->name }}">
+                                @else
+                                    <img src="{{ Storage::disk('cloudinary')->url($product->image) }}"
+                                        alt="{{ $product->name }}">
+                                @endif
+
+
+                                alt="{{ $product->name }}" class="product-image w-full h-full object-cover"
+                                loading="lazy">
                             @else
                                 <div class="w-full h-full flex items-center justify-center bg-gray-200">
                                     <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor"
@@ -728,7 +735,7 @@
                                     </svg>
                                 </div>
                             @endif
-                            {{-- ==================== AKHIR PERUBAHAN ==================== ---}}
+                            {{-- ==================== AKHIR PERUBAHAN ==================== - --}}
                             <!-- Stock Badge -->
                             <div class="absolute top-4 left-4">
                                 @if ($product->stock > 10)

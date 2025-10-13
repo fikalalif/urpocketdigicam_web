@@ -20,15 +20,16 @@ class CategorySeeder extends Seeder
         ];
 
         foreach ($brands as $name => $desc) {
-            Category::updateOrCreate([
-                'name' => $name,
-            ], [
-                'id' => (string) Str::uuid(),
-                'description' => $desc,
-                'hub_category_id' => null,
-                'is_active' => true,
-                'is_visible' => true,
-            ]);
+            Category::updateOrCreate(
+                ['name' => $name],
+                [
+                    'description' => $desc,
+                    'hub_category_id' => null,
+                    'is_active' => true,
+                    'is_visible' => true,
+                    // id sengaja gak diset supaya foreign key di product gak rusak
+                ]
+            );
         }
     }
 }

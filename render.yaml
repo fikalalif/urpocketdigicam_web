@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: urpocketdigicam
+    env: php
+    plan: free
+    buildCommand: |
+      apt-get update && apt-get install -y nodejs npm
+      composer install --no-dev --optimize-autoloader
+      npm install
+      npm run build
+      php artisan config:cache
+      php artisan route:cache
+      php artisan view:cache
+    startCommand: php artisan serve --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://urpocketdigicam.onrender.com
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        value: your-db-host.render.com
+      - key: DB_PORT
+        value: 5432
+      - key: DB_DATABASE
+        value: your_database_name
+      - key: DB_USERNAME
+        value: your_username
+      - key: DB_PASSWORD
+        value: your_password
+      - key: CLOUDINARY_URL
+        value: your_cloudinary_connection_url
