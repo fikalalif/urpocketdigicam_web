@@ -6,25 +6,29 @@ WORKDIR /var/www/html
 # Copy semua file dulu
 COPY . .
 
-# Pastikan storage & bootstrap/cache ada SEBELUM composer install
-RUN mkdir -p storage/framework/{cache,sessions,views} \
+# Buat storage & cache directory
+RUN mkdir -p bootstrap/cache \
+    && mkdir -p storage/framework/{cache,sessions,views} \
     && mkdir -p storage/logs \
-    && mkdir -p bootstrap/cache \
     && chmod -R 777 storage bootstrap/cache
 
-# Allow composer run as root (wajib di Render)
+# Izinkan composer jalan sebagai root
 ENV COMPOSER_ALLOW_SUPERUSER=1
+# Tambahkan path storage agar Laravel bisa detect
+ENV APP_STORAGE=/var/www/html/storage
 
-# Install dependencies dan build assets
-RUN composer install --no-dev --optimize-autoloader \
-    && npm install \
-    && npm run build \
-    && php artisan key:generate \
-    && php artisan config:clear \
-    && php artisan route:clear \
-    && php artisan view:clear
+# Install dependencies (tanpa artisan command dulu)
+RUN composer install --no-dev --optimize-autoloader
+RUN npm install && npm run build
 
-# Jalankan migrasi & server waktu runtime
+# Jalankan artisan command setelah dependensi siap
+RUN php artisan key:generate || true \
+    && php artisan config:clear || true \
+    && php artisan cache:clear || true \
+    && php artisan view:clear || true \
+    && php artisan route:clear || true
+
+# Jalankan migrasi & server saat runtime
 CMD php artisan migrate --force && php artisan serve --host 0.0.0.0 --port 8000
 
 EXPOSE 8000
