@@ -1,38 +1,49 @@
-# Base image
+# ==============================
+# Stage 1: Build frontend assets
+# ==============================
+FROM node:20 AS frontend
+
+WORKDIR /app
+
+# Copy only the files needed for npm install
+COPY package*.json vite.config.js ./
+RUN npm install
+
+# Copy the rest of the app and build assets
+COPY resources ./resources
+RUN npm run build
+
+
+# ==============================
+# Stage 2: Build Laravel app
+# ==============================
 FROM richarvey/nginx-php-fpm:latest
 
 WORKDIR /var/www/html
 
-# Allow composer as root (Render runs as root)
+# Allow composer run as root
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# Copy seluruh file project
+# Copy all backend files
 COPY . .
 
-# Pastikan folder Laravel penting ada & permission benar
+# Copy built assets from the Node stage
+COPY --from=frontend /app/public/build ./public/build
+
+# Create required Laravel directories
 RUN mkdir -p bootstrap/cache \
     && mkdir -p storage/framework/{cache,sessions,views} \
     && mkdir -p storage/logs \
     && chmod -R 777 storage bootstrap/cache
 
-# Install PHP dependencies tanpa artisan jalan dulu
-RUN composer install --no-dev --optimize-autoloader --no-scripts
-
-# Jalankan artisan command dasar (tanpa error stop)
-RUN php artisan package:discover --ansi || true \
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader --no-scripts \
     && php artisan key:generate || true \
     && php artisan config:clear || true \
-    && php artisan cache:clear || true \
     && php artisan route:clear || true \
     && php artisan view:clear || true
 
-# 🔧 Tambahkan Node.js & npm di bawah ini
-RUN apt-get update && apt-get install -y nodejs npm
-
-# Build frontend assets
-RUN npm install && npm run build
-
-# Jalankan migrasi dan start server
+# Jalankan migrasi & serve Laravel
 CMD php artisan migrate --force && php artisan serve --host 0.0.0.0 --port 8000
 
 EXPOSE 8000
