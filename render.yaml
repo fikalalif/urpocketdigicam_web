@@ -4,7 +4,7 @@ services:
     env: php
     plan: free
     buildCommand: |
-      apt-get update && apt-get install -y npm
+      apt-get update && apt-get install -y nodejs npm
       composer install --no-dev --optimize-autoloader
       npm install
       npm run build
@@ -16,23 +16,29 @@ services:
     envVars:
       - key: APP_ENV
         value: production
-      - key: APP_KEY
-        generateValue: true
       - key: APP_DEBUG
         value: false
+      - key: APP_KEY
+        generateValue: true
       - key: APP_URL
-        value: https://urpocketdigicam-web.onrender.com
+        value: https://urpocketdigicam.onrender.com
+
+      # DATABASE
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
-        value: ep-delicate-haze-a1feluh6-pooler.ap-southeast-1.aws.neon.tech
+        sync: false
       - key: DB_PORT
-        value: 5432
+        sync: false
       - key: DB_DATABASE
-        value: neondb
+        sync: false
       - key: DB_USERNAME
-        value: neondb_owner
+        sync: false
       - key: DB_PASSWORD
-        value: npg_yDkxS7ZYC0rb
+        sync: false
+
+      # CLOUDINARY
+      - key: FILESYSTEM_DISK
+        value: cloudinary
       - key: CLOUDINARY_URL
-        value: cloudinary://642563442393488:CzxHU2fl_M-WpOz1XJcLIbnBDFk@dyuzqop5g
+        sync: false
