@@ -20,15 +20,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ✅ CRUD Resource Routes (Web)
     Route::resource('products', ProductController::class);
     Route::resource('categories', CategoryController::class);
+    Route::resource('rentals', \App\Http\Controllers\RentalController::class);
 
     // ✅ Extra Actions - Product
-    Route::post('products/{product}/sync-to-hub', [ProductController::class, 'syncProductToHub'])->name('products.syncToHub');
     Route::put('products/{product}/set-active', [ProductController::class, 'setActive'])->name('products.setActive');
     Route::put('products/{product}/set-inactive', [ProductController::class, 'setInactive'])->name('products.setInactive');
 
-    // ✅ Extra Actions - Category
-    Route::post('categories/{category}/sync-to-hub', [CategoryController::class, 'syncToHub'])->name('categories.syncToHub');
-    Route::put('categories/{category}/deactivate-on-hub', [CategoryController::class, 'deactivateOnHub'])->name('categories.deactivateOnHub');
+    // ✅ Extra Actions - Rental Status
+    Route::patch('rentals/{rental}/status', [\App\Http\Controllers\RentalController::class, 'updateStatus'])->name('rentals.updateStatus');
 
     // ✅ Settings Routes (Volt)
     Route::redirect('settings', 'settings/profile');

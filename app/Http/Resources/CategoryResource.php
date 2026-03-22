@@ -13,8 +13,7 @@ class CategoryResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'hub_category_id' => $this->hub_category_id,
-            'created_at' => $this->created_at,
+            'is_visible' => $this->is_visible,
         ];
     }
 }

@@ -402,13 +402,13 @@
                 </div>
                 <!-- Special Buttons -->
                 <div class="hidden md:flex items-center space-x-4">
-                    <a href="https://phb-umkm.my.id/"
+                    <a href="#featured-products"
                         class="inline-flex items-center px-4 py-2 border-2 border-cyan-300 text-cyan-600 hover:bg-cyan-50 bg-transparent rounded-lg font-medium transition-all hover-lift pixel-border-light">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                         </svg>
-                        Visit UMKM
+                        Sewa Kamera
                     </a>
                     <a href="{{ route('dashboard') }}"
                         class="inline-flex items-center px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg font-medium transition-all hover-lift pixel-shadow">
@@ -771,11 +771,9 @@
                                     class="text-sm text-cyan-600 font-medium bg-cyan-50 px-2 py-1 rounded pixel-border-light">
                                     {{ $product->category->name ?? 'Camera' }}
                                 </span>
-                                @if ($product->sku)
-                                    <span class="text-xs text-gray-500">SKU: {{ $product->sku }}</span>
-                                @else
-                                    <span class="text-xs text-gray-500">ID: {{ substr($product->id, 0, 8) }}...</span>
-                                @endif
+                                <span class="text-xs font-bold uppercase {{ $product->type == 'rental' ? 'text-purple-600' : 'text-pink-600' }}">
+                                    {{ $product->type }}
+                                </span>
                             </div>
                             <h3 class="text-lg font-semibold text-gray-900 mb-2 hover:text-pink-600 transition-colors">
                                 {{ $product->name }}
@@ -787,12 +785,15 @@
                             @endif
                             <div class="flex items-center justify-between">
                                 <div class="flex flex-col">
-                                    <span class="text-2xl font-bold text-pink-600">
-                                        Rp{{ number_format($product->price, 0, ',', '.') }}
-                                    </span>
-                                    @if ($product->stock > 0)
-                                        <span class="text-xs text-green-600 font-medium">{{ $product->stock }} units
-                                            available</span>
+                                    @if($product->type == 'sale' || $product->type == 'both')
+                                        <span class="text-xl font-bold text-pink-600">
+                                            Rp{{ number_format($product->price, 0, ',', '.') }}
+                                        </span>
+                                    @endif
+                                    @if($product->type == 'rental' || $product->type == 'both')
+                                        <span class="text-sm font-semibold text-purple-600">
+                                            Rp{{ number_format($product->rental_price, 0, ',', '.') }}<span class="text-xs">/day</span>
+                                        </span>
                                     @endif
                                 </div>
                                 <button

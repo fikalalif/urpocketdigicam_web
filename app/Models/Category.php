@@ -14,13 +14,10 @@ class Category extends Model
         'id',
         'name',
         'description',
-        'hub_category_id',
-        'is_active',
         'is_visible',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
         'is_visible' => 'boolean',
     ];
 
@@ -31,10 +28,6 @@ class Category extends Model
         static::creating(function ($model) {
             if (empty($model->id)) {
                 $model->id = (string) Str::uuid();
-            }
-
-            if (is_null($model->is_active)) {
-                $model->is_active = true;
             }
 
             if (is_null($model->is_visible)) {

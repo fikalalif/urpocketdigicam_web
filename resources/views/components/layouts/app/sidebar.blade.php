@@ -37,6 +37,10 @@
                     :current="request()->routeIs('categories.index')" wire:navigate>
                     {{ __('Kategori') }}
                 </flux:navlist.item>
+                <flux:navlist.item icon="calendar" :href="route('rentals.index')"
+                    :current="request()->routeIs('rentals.index')" wire:navigate>
+                    {{ __('Rentals') }}
+                </flux:navlist.item>
             </flux:navlist.group>
         </flux:navlist>
 

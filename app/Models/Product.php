@@ -18,21 +18,31 @@ class Product extends Model
         'id',
         'name',
         'description',
+        'type', // sale, rental, both
         'price',
+        'rental_price',
         'stock',
         'sku',
         'image',
         'weight',
         'is_active',
         'is_visible',
-        'hub_product_id',
+        'is_available',
         'category_id',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'is_visible' => 'boolean',
+        'is_available' => 'boolean',
+        'price' => 'decimal:2',
+        'rental_price' => 'decimal:2',
     ];
+
+    public function rentals()
+    {
+        return $this->hasMany(Rental::class);
+    }
 
     public function getImageUrlAttribute()
     {
